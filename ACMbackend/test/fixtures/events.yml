@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  location: MyString
+  link: MyString
+  cover_image_url: MyText
+  start_time: 2026-09-26 12:20:08
+  end_time: 2026-09-26 12:20:08
+  is_sub_event: false
+
+two:
+  title: MyString
+  description: MyText
+  location: MyString
+  link: MyString
+  cover_image_url: MyText
+  start_time: 2026-09-26 12:20:08
+  end_time: 2026-09-26 12:20:08
+  is_sub_event: false

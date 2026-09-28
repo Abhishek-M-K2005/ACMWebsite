@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  year: one
+  sig: one
+  title: MyString
+  duration: MyString
+  meet_link: MyString
+  description: MyText
+  method: MyText
+  results: MyText
+  obstacles: MyText
+  conclusion: MyText
+  references: MyText
+  mentors: MyText
+  members: MyText
+  cover_image_url: MyText
+
+two:
+  year: two
+  sig: two
+  title: MyString
+  duration: MyString
+  meet_link: MyString
+  description: MyText
+  method: MyText
+  results: MyText
+  obstacles: MyText
+  conclusion: MyText
+  references: MyText
+  mentors: MyText
+  members: MyText
+  cover_image_url: MyText

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sig: one
+  name: MyString
+  description: MyText
+  event_date: 2026-09-26 12:25:03
+
+two:
+  sig: two
+  name: MyString
+  description: MyText
+  event_date: 2026-09-26 12:25:03

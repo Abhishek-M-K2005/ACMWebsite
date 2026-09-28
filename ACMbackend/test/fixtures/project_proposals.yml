@@ -1,0 +1,43 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sig: one
+  title: MyString
+  year: 1
+  duration: MyString
+  is_hosted: false
+  hosted_link: MyText
+  thumbnail_url: MyText
+  introduction: MyText
+  learning_outcomes: MyText
+  method_description: MyText
+  results: MyString
+  application: MyText
+  obstacles: MyText
+  conclusion: MyText
+  future_work: MyText
+  references: MyText
+  mentors: MyString
+  members: MyText
+  readme_md: MyText
+
+two:
+  sig: two
+  title: MyString
+  year: 1
+  duration: MyString
+  is_hosted: false
+  hosted_link: MyText
+  thumbnail_url: MyText
+  introduction: MyText
+  learning_outcomes: MyText
+  method_description: MyText
+  results: MyString
+  application: MyText
+  obstacles: MyText
+  conclusion: MyText
+  future_work: MyText
+  references: MyText
+  mentors: MyString
+  members: MyText
+  readme_md: MyText
