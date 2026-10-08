@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-react';
 
-const yantras = ["Sanganitra", "Karyavarta", "Vidyut", "Yantrika", "Sahiitya", "Abhivyakta", "Krutagnata"];
+const yantras = ["Sanganitra", "Karyavarta", "Vidyut", "Yantrika", "Sahiitya", "Abhivyakta", "Krutagnata", "ACMW"];
 
 // NavLinks mapping to real routes
 const navLinks = [

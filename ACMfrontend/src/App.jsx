@@ -21,7 +21,7 @@ const BlogPage = lazy(() => import('./components/blog/BlogPage'));
 const AcmNitkBlogPage = lazy(() => import('./components/blog/AcmNitkBlogPage'));
 
 // --- DATA ARRAYS ---
-const yantras = ["Sanganitra", "Karyavarta", "Vidyut", "Yantrika", "Sahiitya", "Abhivyakta", "Krutagnata"];
+const yantras = ["Sanganitra", "Karyavarta", "Vidyut", "Yantrika", "Sahiitya", "Abhivyakta", "Krutagnata", "ACMW"];
 
 // --- ERROR BOUNDARY ---
 class ErrorBoundary extends React.Component {

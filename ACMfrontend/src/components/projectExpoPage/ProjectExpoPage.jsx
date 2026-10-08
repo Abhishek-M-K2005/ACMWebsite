@@ -5,46 +5,82 @@ import Hero from '../ui/Hero';
 import { api } from '../../services/api';
 import { handleImageError } from '../../lib/utils';
 
+// Core 4 SIG projects: Sanganitra, Yantrika, Vidyuth, Kaaryavarta
 const expoProjects = [
     {
         id: "mock-1",
-        title: "Project Vyom",
-        sig: "Yantrika & Vidyuth",
-        description: "An autonomous rover built to traverse uneven terrains and map environments using LiDAR and computer vision.",
-        image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
-        techStack: ["C++", "ROS", "Raspberry Pi", "SolidWorks"]
-    },
-    {
-        id: "mock-2",
         title: "Innovision Web Portal",
         sig: "Sanganitra",
         description: "The official registration and event management portal for NITK's technical fest, scaling to 15,000+ active users.",
         image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
         techStack: ["React", "Node.js", "PostgreSQL", "Redis"]
+    },
+    {
+        id: "mock-2",
+        title: "Autonomous All-Terrain Rover",
+        sig: "Yantrika",
+        description: "An autonomous rover built to traverse uneven terrains and map environments using LiDAR and computer vision.",
+        image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
+        techStack: ["C++", "ROS", "Raspberry Pi", "SolidWorks"]
+    },
+    {
+        id: "mock-3",
+        title: "Smart Grid Energy Monitor",
+        sig: "Vidyuth",
+        description: "IoT embedded sensor array mapping real-time campus power consumption and surge telemetry.",
+        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+        techStack: ["ESP32", "MQTT", "Embedded C", "InfluxDB"]
+    },
+    {
+        id: "mock-4",
+        title: "Kaaryavarta Operations Suite",
+        sig: "Kaaryavarta",
+        description: "Strategic planning, project analytics dashboard, and cross-functional team coordination workflows.",
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
+        techStack: ["Agile", "Jira", "Product Roadmaps", "Data Analytics"]
     }
 ];
 
+const filterOptions = ["All", "Sanganitra", "Yantrika", "Vidyuth", "Kaaryavarta"];
+
 export default function ProjectExpoPage() {
     const [projects, setProjects] = useState(expoProjects);
+    const [selectedSig, setSelectedSig] = useState("All");
 
     useEffect(() => {
         const loadLiveProjects = async () => {
             const data = await api.getProjects();
             if (data && data.length > 0) {
-                const formatted = data.map(p => ({
-                    id: p.id,
-                    title: p.title,
-                    sig: p.sig?.name || "General",
-                    description: p.description || p.results || "Project developed at ACM NITK.",
-                    image: p.cover_image_url || "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
-                    techStack: p.method ? p.method.split(',').map(s => s.trim()) : ["React", "Ruby on Rails"],
-                    meet_link: p.meet_link || null
-                }));
-                setProjects(formatted);
+                // Strictly filter to the 4 technical & management SIGs: Sanganitra, Yantrika, Vidyuth, Kaaryavarta
+                const allowedData = data.filter(p => {
+                    const s = (p.sig?.name || '').toLowerCase();
+                    return s.includes('sanga') || s.includes('yantrika') || s.includes('vidyut') || s.includes('karyavarta') || s.includes('kaaryavarta');
+                });
+                if (allowedData.length > 0) {
+                    const formatted = allowedData.map(p => ({
+                        id: p.id,
+                        title: p.title,
+                        sig: p.sig?.name || "Sanganitra",
+                        description: p.description || p.results || "Project developed at ACM NITK.",
+                        image: p.cover_image_url || "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
+                        techStack: p.method ? p.method.split(',').map(s => s.trim()) : ["React", "Ruby on Rails"],
+                        meet_link: p.meet_link || null
+                    }));
+                    setProjects(formatted);
+                }
             }
         };
         loadLiveProjects();
     }, []);
+
+    const displayedProjects = selectedSig === "All"
+        ? projects
+        : projects.filter(p => {
+            const sigLower = (p.sig || '').toLowerCase();
+            const filterLower = selectedSig.toLowerCase();
+            return sigLower.includes(filterLower) || (filterLower === 'vidyuth' && sigLower.includes('vidyut')) || (filterLower === 'kaaryavarta' && sigLower.includes('karyavarta'));
+        });
+
     return (
         <main className="flex-grow w-full">
             <Hero>
@@ -58,15 +94,32 @@ export default function ProjectExpoPage() {
 
             <section className="relative w-full pb-32 px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300">
                 <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="flex items-center gap-3 mb-16">
+                    <div className="flex items-center gap-3 mb-8">
                         <div className="h-[1px] w-8 bg-brand-blue"></div>
                         <h2 className="text-xs font-bold tracking-[0.2em] text-brand-blue uppercase">
                             Hall of Fame
                         </h2>
                     </div>
 
+                    {/* Filter Tabs for the 4 core SIGs */}
+                    <div className="flex flex-wrap items-center gap-3 mb-12">
+                        {filterOptions.map((sigName) => (
+                            <button
+                                key={sigName}
+                                onClick={() => setSelectedSig(sigName)}
+                                className={`px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 border ${
+                                    selectedSig === sigName
+                                        ? "bg-brand-blue text-brand-navy border-brand-blue shadow-lg scale-105"
+                                        : "bg-black/[0.03] dark:bg-white/[0.03] text-gray-600 dark:text-gray-300 border-black/10 dark:border-white/10 hover:border-brand-blue/50"
+                                }`}
+                            >
+                                {sigName}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {projects.map((project, idx) => (
+                        {displayedProjects.map((project, idx) => (
                             <motion.div
                                 key={project.id}
                                 initial={{ opacity: 0, y: 30 }}

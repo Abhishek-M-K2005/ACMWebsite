@@ -6,7 +6,7 @@ import Hero from '../ui/Hero';
 import { api } from '../../services/api';
 import { handleImageError } from '../../lib/utils';
 
-// Hardcoded SIG data referencing your public/images folder
+// Hardcoded SIG data referencing public logos - exactly the 4 technical & management SIGs
 const sigs = [
     {
         id: "sanganitra",
@@ -34,7 +34,7 @@ const sigs = [
     },
     {
         id: "kaaryavarta",
-        name: "Karyavarta",
+        name: "Kaaryavarta",
         focus: "Management & Strategy",
         description: "Discover strategic initiatives, product management proposals, and cross-disciplinary operations.",
         image: "/logos/karyavarta.png",
@@ -59,7 +59,11 @@ export default function ProjectProposalsPage() {
         const fetchProposals = async () => {
             const data = await api.getProjectProposals();
             if (data && data.length > 0) {
-                setProposals(data);
+                const allowed = data.filter(p => {
+                    const s = (p.sig?.name || '').toLowerCase();
+                    return s.includes('sanga') || s.includes('yantrika') || s.includes('vidyut') || s.includes('karyavarta') || s.includes('kaaryavarta');
+                });
+                setProposals(allowed);
             }
         };
         fetchProposals();

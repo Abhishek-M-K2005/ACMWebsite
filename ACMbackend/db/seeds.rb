@@ -24,6 +24,10 @@ sanganitra = Sig.create!(name: "Sanganitra", title: "Computer Science SIG", desc
 yantrika = Sig.create!(name: "Yantrika", title: "Mechanical SIG", description: "Building the physical future.")
 vidyuth = Sig.create!(name: "Vidyuth", title: "Electrical SIG", description: "Powering innovations.")
 kaaryavarta = Sig.create!(name: "Kaaryavarta", title: "Management SIG", description: "Leading and organizing.")
+saahitya = Sig.create!(name: "Saahitya", title: "Literary & Research SIG", description: "Technical publications, newsletters and research writing.")
+abhivyakta = Sig.create!(name: "Abhivyakta", title: "Media & Design SIG", description: "Digital art, branding and front-end aesthetics.")
+krutagnata = Sig.create!(name: "Krutagnata", title: "Social Initiative SIG", description: "Tech-driven community outreach and impact.")
+acmw = Sig.create!(name: "ACMW", title: "Women in Technology", description: "Supporting and empowering women in computing and technology.")
 
 # 2. Core Positions
 faculty_advisor = CorePosition.create!(name: "Faculty Advisor", description: "Guiding faculty member for the chapter.")
