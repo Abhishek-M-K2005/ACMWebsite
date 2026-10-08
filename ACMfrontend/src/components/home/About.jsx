@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Users, Lightbulb, Rocket, ChevronRight } from 'lucide-react';
 
 const containerVariants = {
@@ -75,48 +76,48 @@ export default function About() {
         >
           
           {/* Card 1 */}
-          <motion.div variants={itemVariants} className="group p-10 md:p-12 border-b md:border-b-0 md:border-r border-black/10 dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 relative overflow-hidden">
+          <motion.div variants={itemVariants} className="group p-10 md:p-12 border-b md:border-b-0 md:border-r border-black/10 dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 relative overflow-hidden flex flex-col">
             <div className="w-12 h-12 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
               <Lightbulb className="w-5 h-5 text-gray-400 dark:text-gray-300 group-hover:text-brand-blue transition-colors" />
             </div>
             {/* Fixed heading and paragraph text colors */}
             <h4 className="text-xl font-medium text-brand-navy dark:text-white mb-4 transition-colors duration-300">Learn & Innovate</h4>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300 flex-grow">
               We organize a plethora of events covering most fields of engineering like KEP's, guest lectures, and workshops to give students exposure to the worldwide computing sphere.
             </p>
-            <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+            <Link to="/events" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-fit">
               Explore Events <ChevronRight className="w-4 h-4" />
-            </div>
+            </Link>
           </motion.div>
 
           {/* Card 2 */}
-          <motion.div variants={itemVariants} className="group p-10 md:p-12 border-b md:border-b-0 md:border-r border-black/10 dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 relative overflow-hidden">
+          <motion.div variants={itemVariants} className="group p-10 md:p-12 border-b md:border-b-0 md:border-r border-black/10 dark:border-white/10 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 relative overflow-hidden flex flex-col">
             <div className="w-12 h-12 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
               <Rocket className="w-5 h-5 text-gray-400 dark:text-gray-300 group-hover:text-brand-blue transition-colors" />
             </div>
             <h4 className="text-xl font-medium text-brand-navy dark:text-white mb-4 transition-colors duration-300">Competitive Edge</h4>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300 flex-grow">
               Through rigorous coding contests and hackathons, we challenge students to push their boundaries, understand modern tech stacks, and develop real-world problem-solving skills.
             </p>
-            <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-              See Contests <ChevronRight className="w-4 h-4" />
-            </div>
+            <Link to="/project-expo" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-fit">
+              See Projects <ChevronRight className="w-4 h-4" />
+            </Link>
           </motion.div>
 
           {/* Card 3 */}
-          <motion.div variants={itemVariants} className="group p-10 md:p-12 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 relative overflow-hidden">
+          <motion.div variants={itemVariants} className="group p-10 md:p-12 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 relative overflow-hidden flex flex-col">
             <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               <div className="w-12 h-12 rounded-xl bg-brand-blue/10 border border-brand-blue/20 flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
                 <Users className="w-5 h-5 text-brand-blue" />
               </div>
               <h4 className="text-xl font-medium text-brand-navy dark:text-white mb-4 transition-colors duration-300">Global Network</h4>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300">
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300 flex-grow">
                 As a chapter of the world's largest educational and scientific computing society, we provide resources, networking opportunities, and a platform to connect with industry leaders.
               </p>
-              <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                Meet The Team <ChevronRight className="w-4 h-4" />
-              </div>
+              <Link to="/project-proposal" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-fit">
+                Explore Proposals <ChevronRight className="w-4 h-4" />
+              </Link>
             </div>
           </motion.div>
 

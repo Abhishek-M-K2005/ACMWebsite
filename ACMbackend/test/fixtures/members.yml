@@ -1,19 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  email: MyString
-  phone_no: MyString
-  linkedin: MyString
+  name: Member One
+  email: memberone@nitk.edu
+  phone_no: "1234567890"
+  linkedin: https://linkedin.com/in/memberone
   avatar_url: MyText
-  core_positions: one
+  core_position: one
   sig: one
 
 two:
-  name: MyString
-  email: MyString
-  phone_no: MyString
-  linkedin: MyString
+  name: Member Two
+  email: membertwo@nitk.edu
+  phone_no: "0987654321"
+  linkedin: https://linkedin.com/in/membertwo
   avatar_url: MyText
-  core_positions: two
+  core_position: two
   sig: two

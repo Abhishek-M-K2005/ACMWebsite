@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_26_133129) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_123000) do
   create_table "blog_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blog_id", null: false
     t.bigint "category_id", null: false
@@ -229,8 +229,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_133129) do
     t.string "phone_no"
     t.string "linkedin"
     t.text "avatar_url"
-    t.bigint "core_position_id", null: false
-    t.bigint "sig_id", null: false
+    t.bigint "core_position_id"
+    t.bigint "sig_id"
     t.string "reset_password_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -1,7 +1,12 @@
 class ApplicationController < ActionController::API
-  def authorise_request
+  def authorize_request
     header = request.headers['Authorization']
     header = header.split(' ').last if header
+
+    if header.blank?
+      render json: { errors: 'Missing token' }, status: :unauthorized
+      return
+    end
 
     begin
       # more on jwt gem: https://dev.to/mohhossain/a-complete-guide-to-rails-authentication-using-jwt-403p
@@ -9,11 +14,13 @@ class ApplicationController < ActionController::API
       @decoded = JWT.decode(header, Rails.application.secret_key_base)[0]
       @current_user = User.find(@decoded['user_id'])
     rescue ActiveRecord::RecordNotFound
-      render json: {errors: 'User not found'}, status: :unauthorized
+      render json: { errors: 'User not found' }, status: :unauthorized
     rescue JWT::DecodeError
-      render json: {errors: 'Invalid or missing token'}, status: :unauthorized
+      render json: { errors: 'Invalid or missing token' }, status: :unauthorized
     end
   end
+
+  alias_method :authorise_request, :authorize_request
 
   private
 

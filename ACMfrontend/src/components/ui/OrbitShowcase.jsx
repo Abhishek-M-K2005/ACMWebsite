@@ -17,9 +17,12 @@ const rainbowColors = [
 const SIG_IMAGES = {
   sanganitra: "/logos/sanganitra.png",
   karyavarta: "/logos/karyavarta.png",
+  kaaryavarta: "/logos/karyavarta.png",
   vidyut: "/logos/vidyuth.png",
+  vidyuth: "/logos/vidyuth.png",
   yantrika: "/logos/yantrika.png",
   sahiitya: "/logos/Saahitya.jpg",
+  saahitya: "/logos/Saahitya.jpg",
   abhivyakta: "/logos/Abhivyakta.jpeg",
   krutagnata: "/logos/ACM.png",
   acmw: "/logos/acmw.png",

@@ -1,23 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  email: MyString
-  password_digest: MyString
-  phone_no: MyString
-  linkedin: MyString
+  name: User One
+  email: userone@nitk.edu
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  phone_no: "1234567890"
+  linkedin: https://linkedin.com/in/userone
   avatar_url: MyText
   core_position: one
   sig: one
-  reset_password_token: MyString
+  reset_password_token: MyString1
 
 two:
-  name: MyString
-  email: MyString
-  password_digest: MyString
-  phone_no: MyString
-  linkedin: MyString
+  name: User Two
+  email: usertwo@nitk.edu
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  phone_no: "0987654321"
+  linkedin: https://linkedin.com/in/usertwo
   avatar_url: MyText
   core_position: two
   sig: two
-  reset_password_token: MyString
+  reset_password_token: MyString2

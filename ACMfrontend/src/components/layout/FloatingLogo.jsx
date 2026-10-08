@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useLocation } from 'react-router-dom'; // <-- Import useLocation
+import { Link, useLocation } from 'react-router-dom'; // <-- Import Link & useLocation
 
 export default function FloatingLogo() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -27,13 +27,15 @@ export default function FloatingLogo() {
       style={{ x, y, scale, transformOrigin: "top left" }}
       className="fixed top-6 left-4 md:left-8 z-50 flex items-center h-[46px]"
     >
-      <motion.img
-        whileHover={{ scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        src="/logos/ACM.png"
-        alt="ACM NITK Logo"
-        className="w-32 md:w-48 h-auto object-contain cursor-pointer brightness-0 dark:invert transition-all duration-300"
-      />
+      <Link to="/" aria-label="Go to Home" className="block">
+        <motion.img
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          src="/logos/ACM.png"
+          alt="ACM NITK Logo"
+          className="w-32 md:w-48 h-auto object-contain cursor-pointer brightness-0 dark:invert transition-all duration-300"
+        />
+      </Link>
     </motion.div>
   );
 }

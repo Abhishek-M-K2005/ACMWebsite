@@ -2,9 +2,12 @@ class ProjectsController < ApplicationController
   def index
     @projects = Project.all
     @projects = @projects.where(sig_id: params[:sig_id]) if params[:sig_id].present?
-    if params[:year_id].present?
-      @projects = @projects.where(year_id: params[:year_id]) if params[:year_id]
-    else
+    if params[:year_id].present? && params[:year_id] != 'all'
+      @projects = @projects.where(year_id: params[:year_id])
+    elsif params[:year].present? && params[:year] != 'all'
+      year_record = Year.find_by(year: params[:year])
+      @projects = @projects.where(year_id: year_record.id) if year_record
+    elsif params[:current].present? && params[:current].to_s == 'true'
       current_time = Time.current
       academic_year = current_time.month > 4 ? current_time.year : current_time.year - 1
       current_year_record = Year.find_by(year: academic_year)

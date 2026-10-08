@@ -101,7 +101,16 @@ export default function Navbar({ darkMode, setDarkMode }) {
           overflow-hidden flex flex-col p-5 gap-4">
           <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2">Yantras</div>
           <div className="grid grid-cols-2 gap-3 text-sm pl-2">
-            {yantras.map((item) => <span key={item} className="cursor-pointer hover:text-brand-blue font-medium">{item}</span>)}
+            {yantras.map((item) => (
+              <Link
+                key={item}
+                to="/project-proposal"
+                onClick={() => setIsOpen(false)}
+                className="cursor-pointer hover:text-brand-blue font-medium transition-colors"
+              >
+                {item}
+              </Link>
+            ))}
           </div>
           <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2 mt-2">Links</div>
           <div className="grid gap-3 text-sm pl-2">

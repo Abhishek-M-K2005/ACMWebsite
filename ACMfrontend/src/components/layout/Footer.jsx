@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Home, Puzzle, TrendingUp, Calendar, FileText, HelpCircle, MapPin, Mail, Globe, Code2, Camera, BriefcaseBusiness, MessageCircle } from 'lucide-react';
 
 export default function Footer() {
@@ -26,12 +27,12 @@ export default function Footer() {
         <div className="lg:col-span-3 space-y-6 lg:justify-self-center">
           <h3 className="font-bold text-xl tracking-wide">QUICK LINKS</h3>
           <ul className="space-y-4">
-            <li><a href="#" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Home className="w-4 h-4" /> Home</a></li>
-            <li><a href="#" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Puzzle className="w-4 h-4" /> Project Expo</a></li>
-            <li><a href="#" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><TrendingUp className="w-4 h-4" /> Trails</a></li>
-            <li><a href="#" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Calendar className="w-4 h-4" /> Events</a></li>
-            <li><a href="#" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><FileText className="w-4 h-4" /> Blog</a></li>
-            <li><a href="#" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><HelpCircle className="w-4 h-4" /> Contact</a></li>
+            <li><Link to="/" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Home className="w-4 h-4" /> Home</Link></li>
+            <li><Link to="/project-expo" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Puzzle className="w-4 h-4" /> Project Expo</Link></li>
+            <li><Link to="/project-proposal" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><TrendingUp className="w-4 h-4" /> Project Proposals</Link></li>
+            <li><Link to="/events" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Calendar className="w-4 h-4" /> Events</Link></li>
+            <li><Link to="/blog" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><FileText className="w-4 h-4" /> Blog</Link></li>
+            <li><a href="mailto:acm@nitk.edu.in" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><HelpCircle className="w-4 h-4" /> Contact</a></li>
           </ul>
         </div>
 
