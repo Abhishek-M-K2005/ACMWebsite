@@ -25,7 +25,9 @@ export async function fetchWithTimeout(resource, options = {}) {
 export const api = {
   async getEvents() {
     try {
-      const res = await fetchWithTimeout(`${API_BASE_URL}/events`);
+      const token = this.getToken();
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      const res = await fetchWithTimeout(`${API_BASE_URL}/events`, { headers });
       if (!res.ok) return null;
       const data = await res.json();
       return Array.isArray(data) && data.length > 0 ? data : null;
@@ -80,6 +82,27 @@ export const api = {
     }
   },
 
+  async getSigs() {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/sigs`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return Array.isArray(data) && data.length > 0 ? data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async getSig(id) {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/sigs/${id}`);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
   async login(email, password) {
     try {
       const res = await fetchWithTimeout(`${API_BASE_URL}/auth/login`, {
@@ -99,6 +122,34 @@ export const api = {
       if (err instanceof TypeError && err.message.toLowerCase().includes('fetch')) {
         throw new Error('Could not connect to backend server. Ensure it is running on http://localhost:3000.');
       }
+      throw err;
+    }
+  },
+
+  getToken() {
+    return localStorage.getItem('acm_token') || null;
+  },
+
+  async createBlog(blogData) {
+    try {
+      const token = this.getToken();
+      const res = await fetchWithTimeout(`${API_BASE_URL}/blogs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(blogData)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const errorMsg = Array.isArray(data.errors)
+          ? data.errors.join(', ')
+          : (data.errors || data.error || 'Failed to create blog post');
+        throw new Error(errorMsg);
+      }
+      return data;
+    } catch (err) {
       throw err;
     }
   },
@@ -130,5 +181,32 @@ export const api = {
     } catch (e) {
       console.error('Failed to clear auth:', e);
     }
+  },
+
+  async changePassword({ currentPassword, newPassword, passwordConfirmation }) {
+    const token = this.getToken();
+    if (!token) throw new Error('You must be logged in to change your password.');
+
+    const res = await fetchWithTimeout(`${API_BASE_URL}/auth/change_password`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword,
+        password_confirmation: passwordConfirmation
+      })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const errorMsg = Array.isArray(data.errors)
+        ? data.errors.join(', ')
+        : (data.error || data.errors || 'Failed to update password');
+      throw new Error(errorMsg);
+    }
+    return data;
   }
 };

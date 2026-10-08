@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_123000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_145704) do
   create_table "blog_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blog_id", null: false
     t.bigint "category_id", null: false
@@ -79,6 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_123000) do
     t.boolean "is_sub_event"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_intra_club", default: false, null: false
+    t.index ["is_intra_club"], name: "index_events_on_is_intra_club"
   end
 
   create_table "media_assets", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

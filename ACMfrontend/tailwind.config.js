@@ -10,6 +10,10 @@ export default {
       colors: {
         'brand-navy': '#0f172a',
         'brand-blue': '#6CB4EE',
+      },
+      fontFamily: {
+        pixel: ['"Press Start 2P"', 'ui-monospace', 'monospace'],
+        silkscreen: ['"Silkscreen"', 'ui-monospace', 'monospace'],
       }
     },
   },

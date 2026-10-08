@@ -1,24 +1,27 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // Shared Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import FloatingLogo from './components/layout/FloatingLogo';
-import FloatingLogin from './components/layout/FloatingLogin';
 
 // UI and Home Components (eagerly loaded for instant homepage render)
 import Hero from './components/ui/Hero';
 import OrbitShowcase from './components/ui/OrbitShowcase';
 import About from './components/home/About';
+import HomeFeed from './components/home/HomeFeed';
+import Loader from './components/ui/Loader';
 
 // Lazy-loaded Page Components (prevents loading heavy packages on initial load)
+const SigDetailsPage = lazy(() => import('./components/sigs/SigDetailsPage'));
 const DocumentPage = lazy(() => import('./components/documents/DocumentPage'));
 const EventsPage = lazy(() => import('./components/events/EventsPage'));
 const ProjectProposalsPage = lazy(() => import('./components/projectProposals/ProjectProposalsPage'));
 const ProjectExpoPage = lazy(() => import('./components/projectExpoPage/ProjectExpoPage'));
 const BlogPage = lazy(() => import('./components/blog/BlogPage'));
 const AcmNitkBlogPage = lazy(() => import('./components/blog/AcmNitkBlogPage'));
+
 
 // --- DATA ARRAYS ---
 const yantras = ["Sanganitra", "Karyavarta", "Vidyut", "Yantrika", "Sahiitya", "Abhivyakta", "Krutagnata", "ACMW"];
@@ -57,9 +60,38 @@ class ErrorBoundary extends React.Component {
 }
 
 function PageLoader() {
+  return <Loader text="Loading System Module..." />;
+}
+
+// Wrapper that ensures navigation between routes presents the sleek loader blurring the page background
+function RouteChangeHandler({ children }) {
+  const location = useLocation();
+  const [isNavigating, setIsNavigating] = useState(false);
+  const prevPathRef = useRef(location.pathname);
+
+  useEffect(() => {
+    if (prevPathRef.current !== location.pathname) {
+      prevPathRef.current = location.pathname;
+      setIsNavigating(true);
+      window.scrollTo(0, 0);
+      const timer = setTimeout(() => {
+        setIsNavigating(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname]);
+
   return (
-    <div className="flex-grow flex items-center justify-center min-h-[50vh]">
-      <div className="w-8 h-8 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" />
+    <div className="relative w-full">
+      {/* Background content gets blurred during loading transition */}
+      <div className={`transition-all duration-300 ${isNavigating ? 'blur-md pointer-events-none select-none opacity-40 scale-[0.99]' : ''}`}>
+        {children}
+      </div>
+
+      {/* Floating glassmorphic cyber loader upon blurred background */}
+      {isNavigating && (
+        <Loader text="Switching System Module..." overlay={true} />
+      )}
     </div>
   );
 }
@@ -83,6 +115,7 @@ function HomePage() {
 
       <About />
       <OrbitShowcase title="Our Yantras" items={yantras} />
+      <HomeFeed />
     </main>
   );
 }
@@ -90,6 +123,7 @@ function HomePage() {
 // --- MAIN APP ---
 function App() {
   const [darkMode, setDarkMode] = useState(true);
+  const [isInitialBoot, setIsInitialBoot] = useState(true);
 
   useEffect(() => {
     if (darkMode) {
@@ -99,35 +133,54 @@ function App() {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    // Show the full cybernetic loader for 2.4s on initial website boot
+    const bootTimer = setTimeout(() => {
+      setIsInitialBoot(false);
+    }, 2400);
+    return () => clearTimeout(bootTimer);
+  }, []);
+
   return (
     <ErrorBoundary>
       <Router>
         <div className="relative min-h-screen flex flex-col w-full overflow-x-hidden bg-white dark:bg-black transition-colors duration-300">
 
-          {/* Global Nav & UI */}
-          <FloatingLogo />
-          <FloatingLogin />
-          <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+          {/* Initial boot loader overlay with backdrop blur */}
+          {isInitialBoot ? (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-black">
+              <Loader text="Initializing ACM NITK Portal..." overlay={true} />
+            </div>
+          ) : (
+            <>
+              {/* Global Nav & UI */}
+              <FloatingLogo />
+              <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-          {/* Page Routes with Suspense */}
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/documents" element={<DocumentPage />} />
-              <Route path="/documents/:id" element={<DocumentPage />} />
-              <Route path="/project-proposal" element={<ProjectProposalsPage />} />
-              <Route path="/project-proposals" element={<ProjectProposalsPage />} />
-              <Route path="/project-expo" element={<ProjectExpoPage />} />
-              <Route path="/projects" element={<ProjectExpoPage />} />
-              <Route path="/events" element={<EventsPage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/acm-nitk" element={<AcmNitkBlogPage />} />
-              <Route path="*" element={<HomePage />} />
-            </Routes>
-          </Suspense>
+              {/* Main Content mounted fresh after boot loader completes */}
+              <Suspense fallback={<PageLoader />}>
+                <RouteChangeHandler>
+                  <Routes>
+                    <Route path="/sigs/:id" element={<SigDetailsPage />} />
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/documents" element={<DocumentPage />} />
+                    <Route path="/documents/:id" element={<DocumentPage />} />
+                    <Route path="/project-proposal" element={<ProjectProposalsPage />} />
+                    <Route path="/project-proposals" element={<ProjectProposalsPage />} />
+                    <Route path="/project-expo" element={<ProjectExpoPage />} />
+                    <Route path="/projects" element={<ProjectExpoPage />} />
+                    <Route path="/events" element={<EventsPage />} />
+                    <Route path="/blog" element={<BlogPage />} />
+                    <Route path="/blog/acm-nitk" element={<AcmNitkBlogPage />} />
+                    <Route path="*" element={<HomePage />} />
+                  </Routes>
+                </RouteChangeHandler>
+              </Suspense>
 
-          {/* Global Footer */}
-          <Footer />
+              {/* Global Footer */}
+              <Footer />
+            </>
+          )}
         </div>
       </Router>
     </ErrorBoundary>

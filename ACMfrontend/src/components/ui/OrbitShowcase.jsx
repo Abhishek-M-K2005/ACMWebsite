@@ -157,24 +157,47 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
               }}
               className="group absolute z-10 flex flex-col items-center justify-center cursor-pointer"
             >
-              <Link
-                to="/project-proposal"
-                className="relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-2 overflow-hidden"
-                style={{
-                  borderColor: `${themeColor}aa`,
-                  '--glow-color': themeColor,
-                }}
-              >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/logos/ACM.png";
+              {item.name.toLowerCase().replace(/[^a-z]/g, '') === 'acmw' ? (
+                <a
+                  href="https://acmwnitk.hosting.acm.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-2 overflow-hidden"
+                  style={{
+                    borderColor: `${themeColor}aa`,
+                    '--glow-color': themeColor,
                   }}
-                />
-              </Link>
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/logos/ACM.png";
+                    }}
+                  />
+                </a>
+              ) : (
+                <Link
+                  to={`/sigs/${item.name.toLowerCase()}`}
+                  className="relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-2 overflow-hidden"
+                  style={{
+                    borderColor: `${themeColor}aa`,
+                    '--glow-color': themeColor,
+                  }}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/logos/ACM.png";
+                    }}
+                  />
+                </Link>
+              )}
 
               {/* Tooltip popping up on hover */}
               <span

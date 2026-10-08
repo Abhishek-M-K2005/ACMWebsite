@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, User, ArrowRight, X } from 'lucide-react';
+import { Calendar, User, ArrowRight, X, PenLine } from 'lucide-react';
 import Hero from '../ui/Hero';
+import CreateBlogModal from './CreateBlogModal';
 import { api } from '../../services/api';
 import { handleImageError } from '../../lib/utils';
 
@@ -38,23 +39,28 @@ const localBlogs = [
 export default function AcmNitkBlogPage() {
     const [blogs, setBlogs] = useState(localBlogs);
     const [activePost, setActivePost] = useState(null);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+    const currentUser = api.getCurrentUser();
+    const canWrite = currentUser && (currentUser.can_write_blog || currentUser.is_core || currentUser.is_webmaster || currentUser.core_position);
+
+    const loadLiveBlogs = async () => {
+        const data = await api.getBlogs();
+        if (data && data.length > 0) {
+            const formatted = data.map(b => ({
+                id: b.id,
+                title: b.title,
+                author: b.author?.name || b.writer_name || "ACM Team",
+                date: b.published_at ? new Date(b.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "Recent",
+                excerpt: b.subtitle || (b.content ? b.content.slice(0, 160) + '...' : "Explore this write-up by our student chapter members."),
+                image: b.cover_image_url || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
+                content: b.content || b.subtitle || ""
+            }));
+            setBlogs(formatted);
+        }
+    };
 
     useEffect(() => {
-        const loadLiveBlogs = async () => {
-            const data = await api.getBlogs();
-            if (data && data.length > 0) {
-                const formatted = data.map(b => ({
-                    id: b.id,
-                    title: b.title,
-                    author: b.author?.name || "ACM Team",
-                    date: b.published_at ? new Date(b.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "Recent",
-                    excerpt: b.subtitle || (b.content ? b.content.slice(0, 160) + '...' : "Explore this write-up by our student chapter members."),
-                    image: b.cover_image_url || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
-                    content: b.content || b.subtitle || ""
-                }));
-                setBlogs(formatted);
-            }
-        };
         loadLiveBlogs();
     }, []);
 
@@ -71,6 +77,23 @@ export default function AcmNitkBlogPage() {
 
             <section className="relative w-full pb-32 px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300">
                 <div className="max-w-4xl mx-auto relative z-10 flex flex-col gap-12">
+
+                    {/* Webmaster / Core Member Action Bar */}
+                    <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-6">
+                        <div>
+                            <h2 className="text-xl font-bold text-brand-navy dark:text-white">Chapter Articles & Insights</h2>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Written by our SIG leads, Webmaster, and Core members</p>
+                        </div>
+                        {canWrite && (
+                            <button
+                                type="button"
+                                onClick={() => setIsCreateOpen(true)}
+                                className="px-5 py-2.5 rounded-full bg-brand-blue text-brand-navy text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-brand-blue/20"
+                            >
+                                <PenLine className="w-4 h-4" /> Write Article
+                            </button>
+                        )}
+                    </div>
 
                     {blogs.map((post, idx) => (
                         <motion.article
@@ -185,6 +208,13 @@ export default function AcmNitkBlogPage() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Authoring Modal for Core / Webmasters */}
+            <CreateBlogModal
+                isOpen={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+                onBlogCreated={() => loadLiveBlogs()}
+            />
         </main>
     );
 }

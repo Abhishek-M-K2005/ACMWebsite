@@ -20,6 +20,17 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def current_user_or_nil
+    header = request.headers['Authorization']
+    header = header.split(' ').last if header
+    return nil if header.blank?
+
+    decoded = JWT.decode(header, Rails.application.secret_key_base)[0]
+    User.find_by(id: decoded['user_id'])
+  rescue JWT::DecodeError, StandardError
+    nil
+  end
+
   alias_method :authorise_request, :authorize_request
 
   private

@@ -2,7 +2,7 @@
 
 one:
   name: User One
-  email: userone@nitk.edu
+  email: userone@nitk.edu.in
   password_digest: <%= BCrypt::Password.create('password123') %>
   phone_no: "1234567890"
   linkedin: https://linkedin.com/in/userone
@@ -13,7 +13,7 @@ one:
 
 two:
   name: User Two
-  email: usertwo@nitk.edu
+  email: usertwo@nitk.edu.in
   password_digest: <%= BCrypt::Password.create('password123') %>
   phone_no: "0987654321"
   linkedin: https://linkedin.com/in/usertwo

@@ -9,7 +9,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_difference("User.count", 1) do
       post auth_register_url, params: {
         name: "New Student",
-        email: "student@nitk.edu",
+        email: "student@nitk.edu.in",
         password: "securepassword",
         password_confirmation: "securepassword"
       }, as: :json
@@ -58,5 +58,52 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should reject auth_me without token" do
     get auth_me_url
     assert_response :unauthorized
+  end
+
+  test "should change password with valid current password and matching confirmation" do
+    token = JWT.encode({ user_id: @user.id, exp: 24.hours.from_now.to_i }, Rails.application.secret_key_base)
+
+    patch auth_change_password_url, params: {
+      current_password: "password123",
+      new_password: "newsecretpassword",
+      password_confirmation: "newsecretpassword"
+    }, headers: { "Authorization" => "Bearer #{token}" }, as: :json
+
+    assert_response :ok
+    json = JSON.parse(response.body)
+    assert_equal "Password updated successfully", json["message"]
+
+    # Verify new password can authenticate
+    post auth_login_url, params: {
+      email: @user.email,
+      password: "newsecretpassword"
+    }, as: :json
+    assert_response :ok
+  end
+
+  test "should reject change password when current password is wrong" do
+    token = JWT.encode({ user_id: @user.id, exp: 24.hours.from_now.to_i }, Rails.application.secret_key_base)
+
+    patch auth_change_password_url, params: {
+      current_password: "wrongpassword",
+      new_password: "newsecretpassword",
+      password_confirmation: "newsecretpassword"
+    }, headers: { "Authorization" => "Bearer #{token}" }, as: :json
+
+    assert_response :unauthorized
+  end
+
+  test "should reject change password when confirmation does not match" do
+    token = JWT.encode({ user_id: @user.id, exp: 24.hours.from_now.to_i }, Rails.application.secret_key_base)
+
+    patch auth_change_password_url, params: {
+      current_password: "password123",
+      new_password: "newsecretpassword",
+      password_confirmation: "mismatchedpassword"
+    }, headers: { "Authorization" => "Bearer #{token}" }, as: :json
+
+    assert_response :unprocessable_entity
+    json = JSON.parse(response.body)
+    assert_match(/match/i, json["error"])
   end
 end

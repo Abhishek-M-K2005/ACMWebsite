@@ -39,7 +39,7 @@ webmaster = CorePosition.create!(name: "Webmaster", description: "Manages the cl
 # 3. Users (Test accounts for your Login portal)
 advisor_user = User.create!(
   name: "Dr. Smith", 
-  email: "advisor@nitk.edu", 
+  email: "advisor@nitk.edu.in", 
   password: "password123", 
   sig: sanganitra, 
   core_position: faculty_advisor
@@ -47,7 +47,7 @@ advisor_user = User.create!(
 
 president_user = User.create!(
   name: "Alice Johnson", 
-  email: "president@nitk.edu", 
+  email: "president@nitk.edu.in", 
   password: "password123", 
   sig: yantrika, 
   core_position: president
@@ -55,7 +55,7 @@ president_user = User.create!(
 
 webmaster_user = User.create!(
   name: "Bob Code", 
-  email: "webmaster@nitk.edu", 
+  email: "webmaster@nitk.edu.in", 
   password: "password123", 
   sig: sanganitra, 
   core_position: webmaster
@@ -63,7 +63,7 @@ webmaster_user = User.create!(
 
 convenor_user = User.create!(
   name: "Charlie Event", 
-  email: "convenor@nitk.edu", 
+  email: "convenor@nitk.edu.in", 
   password: "password123", 
   sig: kaaryavarta, 
   core_position: convenor
