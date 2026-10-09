@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Sparkles, Binary, Code2 } from 'lucide-react';
+import { Terminal, Sparkles } from 'lucide-react';
 
 const SYSTEM_LOGS = [
   'INITIALIZING QUANTUM RUNTIME...',

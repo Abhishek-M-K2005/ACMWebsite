@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CircleUserRound, X, Mail, Lock, LogIn, LogOut, CheckCircle, KeyRound } from 'lucide-react';
 import { api } from '../../services/api';
 
-export default function FloatingLogin({ isOpen: controlledOpen, onClose }) {
+export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthChange }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : internalOpen;
@@ -19,7 +19,7 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose }) {
     setPwdSuccess('');
   };
 
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => api.getCurrentUser());
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -36,8 +36,10 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose }) {
   const [isPwdLoading, setIsPwdLoading] = useState(false);
 
   useEffect(() => {
-    setCurrentUser(api.getCurrentUser());
-  }, [isOpen]);
+    const refreshUser = () => setCurrentUser(api.getCurrentUser());
+    window.addEventListener('acm-auth-changed', refreshUser);
+    return () => window.removeEventListener('acm-auth-changed', refreshUser);
+  }, []);
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -92,6 +94,8 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose }) {
       const data = await api.login(cleanEmail, password);
       api.saveAuth(data.token, data.user);
       setCurrentUser(data.user);
+      onAuthChange?.(data.user);
+      window.dispatchEvent(new Event('acm-auth-changed'));
       setSuccessMsg(`Welcome, ${data.user.name || 'Member'}!`);
       setTimeout(() => {
         handleClose();
@@ -107,6 +111,8 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose }) {
   const handleLogout = () => {
     api.logout();
     setCurrentUser(null);
+    onAuthChange?.(null);
+    window.dispatchEvent(new Event('acm-auth-changed'));
     handleClose();
   };
 

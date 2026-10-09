@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Home, Puzzle, TrendingUp, Calendar, FileText, HelpCircle, MapPin, Mail, Globe, Code2, Camera, BriefcaseBusiness, MessageCircle } from 'lucide-react';
+import { Home, Users, Puzzle, TrendingUp, Calendar, FileText, HelpCircle, MapPin, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -9,11 +9,10 @@ export default function Footer() {
         {/* Column 1: About */}
         <div className="lg:col-span-5 space-y-6 pr-0 lg:pr-8">
           
-          {/* Replaced the CSS logo and text with the SVG */}
           <div className="flex items-center mb-4">
             <img 
-              src="/logos/ACM.svg" 
-              alt="ACM NITK Logo" 
+              src="/logos/ACM.png" 
+              alt="Association for Computing Machinery, NITK Student Chapter" 
               className="w-56 md:w-64 h-auto object-contain"
             />
           </div>
@@ -28,6 +27,7 @@ export default function Footer() {
           <h3 className="font-bold text-xl tracking-wide">QUICK LINKS</h3>
           <ul className="space-y-4">
             <li><Link to="/" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Home className="w-4 h-4" /> Home</Link></li>
+            <li><Link to="/about" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Users className="w-4 h-4" /> About &amp; Team</Link></li>
             <li><Link to="/project-expo" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Puzzle className="w-4 h-4" /> Project Expo</Link></li>
             <li><Link to="/project-proposal" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><TrendingUp className="w-4 h-4" /> Project Proposals</Link></li>
             <li><Link to="/events" className="flex items-center gap-3 hover:text-brand-blue transition-colors text-sm"><Calendar className="w-4 h-4" /> Events</Link></li>
@@ -57,13 +57,12 @@ export default function Footer() {
 
           <div className="space-y-4">
             <h3 className="font-bold text-xl tracking-wide">CONNECT</h3>
-            <div className="flex gap-4">
-              <a href="#" aria-label="Facebook" className="hover:text-brand-blue transition-colors"><Globe className="w-6 h-6" /></a>
-              <a href="#" aria-label="GitHub" className="hover:text-brand-blue transition-colors"><Code2 className="w-6 h-6" /></a>
-              <a href="#" aria-label="Instagram" className="hover:text-brand-blue transition-colors"><Camera className="w-6 h-6" /></a>
-              <a href="#" aria-label="LinkedIn" className="hover:text-brand-blue transition-colors"><BriefcaseBusiness className="w-6 h-6" /></a>
-              <a href="#" aria-label="Twitter" className="hover:text-brand-blue transition-colors"><MessageCircle className="w-6 h-6" /></a>
-            </div>
+            <p className="text-sm text-gray-300">
+              For chapter inquiries, email{' '}
+              <a href="mailto:acm@nitk.edu.in" className="underline underline-offset-4 hover:text-brand-blue transition-colors">
+                acm@nitk.edu.in
+              </a>.
+            </p>
           </div>
         </div>
 

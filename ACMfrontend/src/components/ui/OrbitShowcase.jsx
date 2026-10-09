@@ -24,20 +24,21 @@ const SIG_IMAGES = {
   sahiitya: "/logos/Saahitya.jpg",
   saahitya: "/logos/Saahitya.jpg",
   abhivyakta: "/logos/Abhivyakta.jpeg",
-  krutagnata: "/logos/ACM.png",
+  krutagnata: "/logos/krutagnata.png",
   acmw: "/logos/acmw.png",
 };
 
 const defaultYantras = [
   { name: "Sanganitra", image: "/logos/sanganitra.png" },
-  { name: "Karyavarta", image: "/logos/karyavarta.png" },
-  { name: "Vidyut", image: "/logos/vidyuth.png" },
   { name: "Yantrika", image: "/logos/yantrika.png" },
-  { name: "Sahiitya", image: "/logos/Saahitya.jpg" },
+  { name: "Vidyuth", image: "/logos/vidyuth.png" },
+  { name: "Kaaryavarta", image: "/logos/karyavarta.png" },
+  { name: "Saahitya", image: "/logos/Saahitya.jpg" },
   { name: "Abhivyakta", image: "/logos/Abhivyakta.jpeg" },
-  { name: "Krutagnata", image: "/logos/ACM.png" },
-  { name: "ACMW", image: "/logos/acmw.png" }
+  { name: "Krutagnata", image: "/logos/krutagnata.png" }
 ];
+
+const FALLBACK_IMAGE = "/logos/ACM.svg";
 
 function resolveItem(item) {
   if (typeof item === 'object' && item !== null) {
@@ -45,14 +46,14 @@ function resolveItem(item) {
     const key = name.toLowerCase().trim();
     return {
       name,
-      image: item.image || item.logo || SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : '/logos/ACM.png')
+      image: item.image || item.logo || SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : FALLBACK_IMAGE)
     };
   }
   const str = String(item || '').trim();
   const key = str.toLowerCase();
   return {
     name: str,
-    image: SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : '/logos/ACM.png')
+    image: SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : FALLBACK_IMAGE)
   };
 }
 
@@ -69,8 +70,10 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
 
   useEffect(() => {
     const updateRadii = () => {
-      if (window.innerWidth < 768) {
-        setRadii({ x: 140, y: 220 });
+      if (window.innerWidth < 1024) {
+        // Leave enough room for the orbiting logo circles on narrow screens.
+        const x = Math.min(300, Math.max(128, (window.innerWidth - 64) / 2));
+        setRadii({ x, y: window.innerWidth < 768 ? 220 : 240 });
       } else {
         setRadii({ x: 380, y: 240 });
       }
@@ -92,7 +95,7 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
   const resolvedItems = (items && items.length > 0 ? items : defaultYantras).map(resolveItem);
 
   return (
-    <section ref={containerRef} className="relative w-full py-48 bg-white dark:bg-black transition-colors duration-300 overflow-hidden flex items-center justify-center min-h-[80vh]">
+    <section id="yantras" ref={containerRef} className="relative w-full py-48 bg-white dark:bg-black transition-colors duration-300 overflow-hidden flex items-center justify-center min-h-[80vh]">
 
       {/* Ambient center blue glow */}
       <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-10 dark:opacity-20 z-0">
@@ -171,16 +174,17 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
+                    className={`w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110 ${item.image === FALLBACK_IMAGE ? 'invert dark:invert-0' : ''}`}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "/logos/ACM.png";
+                      e.target.src = FALLBACK_IMAGE;
+                      e.target.classList.add('invert', 'dark:invert-0');
                     }}
                   />
                 </a>
               ) : (
                 <Link
-                  to={`/sigs/${item.name.toLowerCase()}`}
+                  to={`/sigs/${item.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`}
                   className="relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-2 overflow-hidden"
                   style={{
                     borderColor: `${themeColor}aa`,
@@ -190,10 +194,11 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
+                    className={`w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110 ${item.image === FALLBACK_IMAGE ? 'invert dark:invert-0' : ''}`}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "/logos/ACM.png";
+                      e.target.src = FALLBACK_IMAGE;
+                      e.target.classList.add('invert', 'dark:invert-0');
                     }}
                   />
                 </Link>
@@ -202,7 +207,7 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
               {/* Tooltip popping up on hover */}
               <span
                 style={{ color: themeColor }}
-                className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 dark:bg-black/90 border border-black/10 dark:border-white/10 shadow-lg transform translate-y-1 group-hover:translate-y-0"
+                className="absolute -bottom-8 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 pointer-events-none px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 dark:bg-black/90 border border-black/10 dark:border-white/10 shadow-lg transform translate-y-1 group-hover:translate-y-0 group-focus-within:translate-y-0"
               >
                 {item.name}
               </span>

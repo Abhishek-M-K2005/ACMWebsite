@@ -6,17 +6,17 @@ import { api } from '../../services/api';
 
 const DEFAULT_YANTRAS = [
   { id: 1, name: "Sanganitra" },
-  { id: 2, name: "Karyavarta" },
-  { id: 3, name: "Vidyut" },
-  { id: 4, name: "Yantrika" },
-  { id: 5, name: "Sahiitya" },
+  { id: 2, name: "Yantrika" },
+  { id: 3, name: "Vidyuth" },
+  { id: 4, name: "Kaaryavarta" },
+  { id: 5, name: "Saahitya" },
   { id: 6, name: "Abhivyakta" },
-  { id: 7, name: "Krutagnata" },
-  { id: 8, name: "ACMW" }
+  { id: 7, name: "Krutagnata" }
 ];
 
 const navLinks = [
   { name: "Home", path: "/" },
+  { name: "About & Team", path: "/about" },
   { name: "Project Proposal", path: "/project-proposals" },
   { name: "Project Expo", path: "/projects" },
   { name: "Events", path: "/events" },
@@ -28,6 +28,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [sigs, setSigs] = useState(DEFAULT_YANTRAS);
+  const [currentUser, setCurrentUser] = useState(() => api.getCurrentUser());
   const dropdownRef = useRef(null);
 
   // Fetch SIGs from backend model dynamically
@@ -54,15 +55,12 @@ export default function Navbar({ darkMode, setDarkMode }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Check if the user is authenticated via local storage
-  const currentUser = JSON.parse(localStorage.getItem('acm_user'));
-
   // Track the current route to highlight the active tab
   const location = useLocation();
 
   return (
     <>
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] md:w-fit max-w-5xl z-40 text-brand-navy dark:text-white transition-colors duration-300">
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] lg:w-fit max-w-5xl z-40 text-brand-navy dark:text-white transition-colors duration-300">
 
         <div className="flex items-center justify-between px-6 py-3 rounded-full 
           bg-brand-blue/10 dark:bg-white/10 
@@ -72,17 +70,25 @@ export default function Navbar({ darkMode, setDarkMode }) {
           w-full transition-all duration-300">
 
           {/* Mobile View: Justified to the right so it doesn't overlap the Floating Logo on the left */}
-          <div className="md:hidden flex items-center justify-end w-full gap-4">
-            <button onClick={() => setDarkMode(!darkMode)} className="p-1 hover:text-brand-blue transition-colors">
+          <div className="lg:hidden flex items-center justify-end w-full gap-4">
+            <button type="button" aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'} onClick={() => setDarkMode(!darkMode)} className="p-2 rounded-lg hover:text-brand-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue transition-colors">
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <button onClick={() => setIsOpen(!isOpen)}>
+            <button type="button" aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue">
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
 
           {/* Desktop Links */}
-          <ul className="hidden md:flex items-center gap-6 text-sm font-semibold pl-4">
+          <ul className="hidden lg:flex items-center gap-6 text-sm font-semibold pl-4">
+            <li>
+              <Link
+                to="/"
+                className={`cursor-pointer transition-colors whitespace-nowrap ${location.pathname === '/' ? 'text-brand-blue' : 'hover:text-brand-blue'}`}
+              >
+                Home
+              </Link>
+            </li>
             <li 
               ref={dropdownRef} 
               className="relative" 
@@ -92,16 +98,16 @@ export default function Navbar({ darkMode, setDarkMode }) {
               <button 
                 type="button"
                 onClick={() => setDropdownOpen((prev) => !prev)} 
-                className={`flex items-center gap-1 transition-colors ${
-                  location.pathname.startsWith('/sigs') ? 'text-brand-blue' : 'hover:text-brand-blue'
-                }`}
                 aria-haspopup="true"
                 aria-expanded={dropdownOpen}
+                className={`flex items-center gap-1 rounded transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue ${
+                  location.pathname.startsWith('/sigs') ? 'text-brand-blue' : 'hover:text-brand-blue'
+                }`}
               >
                 Yantras <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {dropdownOpen && (
-                <div className="absolute top-full pt-3 left-0 w-52 z-50">
+                <div className="absolute left-full top-0 z-50 w-56 pl-3">
                   <ul className="py-2 rounded-2xl 
                     bg-white/95 dark:bg-black/90 
                     backdrop-blur-[24px] backdrop-saturate-150 
@@ -126,7 +132,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                         );
                       }
 
-                      const sigPath = `/sigs/${sig.id || sig.name.toLowerCase()}`;
+                      const sigPath = `/sigs/${sig.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
                       const isActive = location.pathname === sigPath;
                       return (
                         <li key={sig.id || sig.name}>
@@ -149,7 +155,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
               )}
             </li>
 
-            {navLinks.map((link) => (
+            {navLinks.slice(1).map((link) => (
               <li key={link.name}>
                 <Link
                   to={link.path}
@@ -183,7 +189,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                     onClick={() => {
                       api.logout();
                       setCurrentUser(null);
-                      window.location.reload();
+                      window.dispatchEvent(new Event('acm-auth-changed'));
                     }}
                     title="Sign Out"
                     className="text-gray-400 hover:text-red-500 transition-colors p-1"
@@ -199,7 +205,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
             </li>
 
             <li className="ml-2 border-l border-brand-navy/20 dark:border-white/40 pl-4 shrink-0">
-              <button onClick={() => setDarkMode(!darkMode)} className="hover:scale-110 hover:text-brand-blue transition-all flex items-center">
+                <button type="button" aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'} onClick={() => setDarkMode(!darkMode)} className="hover:scale-110 hover:text-brand-blue transition-all flex items-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue">
                 {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
             </li>
@@ -208,12 +214,20 @@ export default function Navbar({ darkMode, setDarkMode }) {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden absolute top-full mt-4 w-full rounded-3xl 
+          <div id="mobile-navigation" className="lg:hidden absolute top-full mt-4 w-full rounded-3xl
             bg-white/90 dark:bg-black/80 
             backdrop-blur-[32px] backdrop-saturate-150 
             border border-brand-blue/20 dark:border-white/10 
             shadow-xl
             overflow-hidden flex flex-col p-5 gap-4">
+
+            <Link
+              to="/"
+              onClick={() => setIsOpen(false)}
+              className={`pl-2 text-sm font-medium ${location.pathname === '/' ? 'text-brand-blue font-bold' : 'hover:text-brand-blue'}`}
+            >
+              Home
+            </Link>
 
             <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2">Yantras</div>
             <div className="grid grid-cols-2 gap-3 text-sm pl-2">
@@ -234,7 +248,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   );
                 }
 
-                const sigPath = `/sigs/${sig.id || sig.name.toLowerCase()}`;
+                const sigPath = `/sigs/${sig.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
                 const isActive = location.pathname === sigPath;
                 return (
                   <Link
@@ -253,7 +267,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
 
             <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2 mt-2">Links</div>
             <div className="grid gap-3 text-sm pl-2">
-              {navLinks.map((link) => (
+              {navLinks.slice(1).map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
@@ -283,8 +297,8 @@ export default function Navbar({ darkMode, setDarkMode }) {
                     onClick={() => {
                       api.logout();
                       setCurrentUser(null);
+                      window.dispatchEvent(new Event('acm-auth-changed'));
                       setIsOpen(false);
-                      window.location.reload();
                     }}
                     className="flex items-center gap-1.5 text-xs text-red-500 font-semibold px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
                   >
@@ -306,7 +320,11 @@ export default function Navbar({ darkMode, setDarkMode }) {
       </nav>
 
       {/* Keep the modal isolated from the sticky nav structure */}
-      <FloatingLogin isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      <FloatingLogin
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onAuthChange={setCurrentUser}
+      />
     </>
   );
 }

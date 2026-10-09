@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { GitBranch, ExternalLink } from 'lucide-react';
 import Hero from '../ui/Hero';
@@ -83,7 +83,7 @@ export default function ProjectExpoPage() {
 
     return (
         <main className="flex-grow w-full">
-            <Hero>
+            <Hero description="Explore projects built by ACM NITK members and discover the Yantras behind them.">
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Witness our
                 </span>
@@ -134,6 +134,8 @@ export default function ProjectExpoPage() {
                                         src={project.image}
                                         onError={handleImageError}
                                         alt={project.title}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                     />
 

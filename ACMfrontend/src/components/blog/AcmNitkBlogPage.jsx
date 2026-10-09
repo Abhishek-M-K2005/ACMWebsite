@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, ArrowRight, X, PenLine } from 'lucide-react';
 import Hero from '../ui/Hero';
@@ -6,67 +6,48 @@ import CreateBlogModal from './CreateBlogModal';
 import { api } from '../../services/api';
 import { handleImageError } from '../../lib/utils';
 
-const localBlogs = [
-    {
-        id: "mock-1",
-        title: "Building Scalable Systems for Innovision 2026",
-        author: "Sanganitra Team",
-        date: "September 5, 2026",
-        excerpt: "A deep dive into how our backend team utilized Node.js and Redis to handle a 500% spike in traffic during the Innovision registration weekend without dropping a single request.",
-        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
-        content: "A deep dive into how our backend team utilized Node.js and Redis to handle a 500% spike in traffic during the Innovision registration weekend without dropping a single request. By implementing efficient caching layers and connection pooling, the architecture maintained sub-50ms response times even during peak surges."
-    },
-    {
-        id: "mock-2",
-        title: "The Ultimate Guide to Open Source Contributions",
-        author: "Vidyut SIG",
-        date: "August 22, 2026",
-        excerpt: "Overwhelmed by massive codebases? We break down the exact step-by-step process our first-year members used to get their first PRs merged into major projects like React and Vite.",
-        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop",
-        content: "Overwhelmed by massive codebases? We break down the exact step-by-step process our first-year members used to get their first PRs merged into major projects like React and Vite. Starting from good first issues, mastering git workflows, to writing clean documentation and engaging with maintainers."
-    },
-    {
-        id: "mock-3",
-        title: "Mastering Dynamic Programming for ICPC",
-        author: "Karyavarta Competitive Team",
-        date: "July 14, 2026",
-        excerpt: "Dynamic programming doesn't have to be scary. Here are the 5 core patterns you need to recognize to solve 90% of medium-to-hard DP problems in competitive programming.",
-        image: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=1000&auto=format&fit=crop",
-        content: "Dynamic programming doesn't have to be scary. Here are the 5 core patterns you need to recognize to solve 90% of medium-to-hard DP problems in competitive programming: 0/1 Knapsack, Longest Common Subsequence, Matrix Chain Multiplication, Tree DP, and Bitmask DP."
-    }
-];
-
 export default function AcmNitkBlogPage() {
-    const [blogs, setBlogs] = useState(localBlogs);
+    const [blogs, setBlogs] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
     const [activePost, setActivePost] = useState(null);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     const currentUser = api.getCurrentUser();
     const canWrite = currentUser && (currentUser.can_write_blog || currentUser.is_core || currentUser.is_webmaster || currentUser.core_position);
 
-    const loadLiveBlogs = async () => {
+    const loadLiveBlogs = async (isActive = () => true) => {
         const data = await api.getBlogs();
-        if (data && data.length > 0) {
-            const formatted = data.map(b => ({
+        if (!isActive()) return;
+        if (!data) {
+            setLoadError(true);
+            setIsLoading(false);
+            return;
+        }
+        setLoadError(false);
+        const formatted = data.map(b => ({
                 id: b.id,
                 title: b.title,
                 author: b.author?.name || b.writer_name || "ACM Team",
-                date: b.published_at ? new Date(b.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "Recent",
+                publishedAt: b.published_at || b.created_at || null,
+                date: b.published_at || b.created_at ? new Date(b.published_at || b.created_at).toLocaleDateString(undefined, { dateStyle: 'long' }) : "Date unavailable",
                 excerpt: b.subtitle || (b.content ? b.content.slice(0, 160) + '...' : "Explore this write-up by our student chapter members."),
-                image: b.cover_image_url || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
+                image: b.cover_image_url || null,
                 content: b.content || b.subtitle || ""
-            }));
-            setBlogs(formatted);
-        }
+            })).sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+        setBlogs(formatted);
+        setIsLoading(false);
     };
 
     useEffect(() => {
-        loadLiveBlogs();
+        let isActive = true;
+        Promise.resolve().then(() => loadLiveBlogs(() => isActive));
+        return () => { isActive = false; };
     }, []);
 
     return (
         <main className="flex-grow w-full">
-            <Hero>
+            <Hero description="Read articles and updates written by ACM NITK members and chapter teams.">
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Inside
                 </span>
@@ -95,6 +76,9 @@ export default function AcmNitkBlogPage() {
                         )}
                     </div>
 
+                    {isLoading && <p className="py-8 text-center text-sm text-gray-500" role="status">Loading chapter articles…</p>}
+                    {!isLoading && loadError && <p className="py-8 text-center text-sm text-gray-500">Chapter articles are temporarily unavailable. Please try again later.</p>}
+                    {!isLoading && !loadError && blogs.length === 0 && <p className="py-8 text-center text-sm text-gray-500">No chapter articles have been published yet.</p>}
                     {blogs.map((post, idx) => (
                         <motion.article
                             key={post.id}
@@ -105,14 +89,16 @@ export default function AcmNitkBlogPage() {
                             className="group flex flex-col md:flex-row gap-8 items-center p-6 md:p-8 rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-sm hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors duration-500 shadow-sm"
                         >
                             {/* Thumbnail */}
-                            <div className="w-full md:w-1/3 h-48 md:h-full rounded-2xl overflow-hidden shrink-0">
+                            {post.image && <div className="w-full md:w-1/3 h-48 md:h-full rounded-2xl overflow-hidden shrink-0">
                                 <img
                                     src={post.image}
                                     onError={handleImageError}
                                     alt={post.title}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                 />
-                            </div>
+                            </div>}
 
                             {/* Content */}
                             <div className="flex flex-col justify-center flex-grow">
@@ -135,9 +121,10 @@ export default function AcmNitkBlogPage() {
                                     {post.excerpt}
                                 </p>
 
-                                <button
+                            <button
+                                    type="button"
                                     onClick={() => setActivePost(post)}
-                                    className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase w-fit hover:text-indigo-400 transition-colors"
+                                    className="flex min-h-11 items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase w-fit hover:text-indigo-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
                                 >
                                     Read Article <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </button>
@@ -153,6 +140,9 @@ export default function AcmNitkBlogPage() {
                 {activePost && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="article-dialog-title"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -166,20 +156,22 @@ export default function AcmNitkBlogPage() {
                             className="relative w-full max-w-3xl bg-white dark:bg-[#111] rounded-3xl shadow-2xl p-8 md:p-12 border border-black/10 dark:border-white/10 z-10 max-h-[85vh] overflow-y-auto"
                         >
                             <button
+                                type="button"
+                                aria-label="Close article"
                                 onClick={() => setActivePost(null)}
-                                className="absolute top-6 right-6 text-gray-400 hover:text-brand-navy dark:hover:text-white transition-colors"
+                                className="absolute right-4 top-4 rounded-lg p-2 text-gray-500 hover:text-brand-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-blue dark:hover:text-white sm:right-6 sm:top-6"
                             >
                                 <X className="w-6 h-6" />
                             </button>
 
-                            <div className="w-full h-56 rounded-2xl overflow-hidden mb-8">
+                            {activePost.image && <div className="w-full h-56 rounded-2xl overflow-hidden mb-8">
                                 <img
                                     src={activePost.image}
                                     onError={handleImageError}
                                     alt={activePost.title}
                                     className="w-full h-full object-cover"
                                 />
-                            </div>
+                            </div>}
 
                             <div className="flex items-center gap-4 text-xs font-medium text-gray-500 dark:text-gray-400 mb-4">
                                 <div className="flex items-center gap-1.5">
@@ -192,7 +184,7 @@ export default function AcmNitkBlogPage() {
                                 </div>
                             </div>
 
-                            <h2 className="text-3xl md:text-4xl font-black text-brand-navy dark:text-white mb-6">
+                            <h2 id="article-dialog-title" className="text-3xl md:text-4xl font-black text-brand-navy dark:text-white mb-6">
                                 {activePost.title}
                             </h2>
 

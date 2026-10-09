@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { MotionConfig } from 'framer-motion';
 
 // Shared Layout Components
 import Navbar from './components/layout/Navbar';
@@ -21,10 +22,11 @@ const ProjectProposalsPage = lazy(() => import('./components/projectProposals/Pr
 const ProjectExpoPage = lazy(() => import('./components/projectExpoPage/ProjectExpoPage'));
 const BlogPage = lazy(() => import('./components/blog/BlogPage'));
 const AcmNitkBlogPage = lazy(() => import('./components/blog/AcmNitkBlogPage'));
+const AboutTeamPage = lazy(() => import('./components/home/AboutTeamPage'));
 
 
 // --- DATA ARRAYS ---
-const yantras = ["Sanganitra", "Karyavarta", "Vidyut", "Yantrika", "Sahiitya", "Abhivyakta", "Krutagnata", "ACMW"];
+const yantras = ["Sanganitra", "Yantrika", "Vidyuth", "Kaaryavarta", "Saahitya", "Abhivyakta", "Krutagnata"];
 
 // --- ERROR BOUNDARY ---
 class ErrorBoundary extends React.Component {
@@ -70,6 +72,27 @@ function RouteChangeHandler({ children }) {
   const prevPathRef = useRef(location.pathname);
 
   useEffect(() => {
+    const descriptions = {
+      '/': "Explore ACM NITK's Yantras, projects, events, and computing community at NITK Surathkal.",
+      '/about': 'Learn about ACM NITK, its history, and how to reach the chapter team.',
+      '/documents': 'Browse chapter documents and resources from ACM NITK.',
+      '/project-proposal': 'Learn how to propose and develop a project with ACM NITK.',
+      '/project-proposals': 'Learn how to propose and develop a project with ACM NITK.',
+      '/project-expo': 'Explore projects built by the ACM NITK community.',
+      '/projects': 'Explore projects built by the ACM NITK community.',
+      '/events': 'Browse events and activities from ACM NITK.',
+      '/blog': 'Read stories and updates from ACM NITK.',
+      '/blog/acm-nitk': 'Read articles and updates from the ACM NITK chapter.',
+    };
+    const description = location.pathname.startsWith('/sigs/')
+      ? 'Explore this ACM NITK interest group, its focus, projects, and activities.'
+      : (descriptions[location.pathname] || descriptions['/']);
+    document.title = 'ACM NITK';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) metaDescription.content = description;
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (prevPathRef.current !== location.pathname) {
       prevPathRef.current = location.pathname;
       setIsNavigating(true);
@@ -100,17 +123,29 @@ function RouteChangeHandler({ children }) {
 function HomePage() {
   return (
     <main className="flex-grow w-full">
-      <Hero>
-        <span className="text-3xl md:text-4xl lg:text-5xl font-semibold text-brand-navy dark:text-white transition-colors duration-300">
-          Building the community in
+      <Hero
+        variant="landing"
+        description="Advancing Computing as a Science & Profession"
+        actions={(
+          <>
+            <a
+              href="#yantras"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand-blue px-7 py-3 text-sm font-bold text-brand-navy shadow-lg shadow-brand-blue/20 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue"
+            >
+              Explore Yantras
+            </a>
+            <Link
+              to="/events"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-brand-blue/40 bg-white/60 px-7 py-3 text-sm font-bold text-brand-navy transition hover:bg-brand-blue/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+            >
+              View Events
+            </Link>
+          </>
+        )}
+      >
+        <span className="text-brand-blue">
+          ACM NITK
         </span>
-        <div className="flex items-baseline justify-center">
-          <span className="text-3xl md:text-4xl lg:text-5xl font-semibold text-brand-navy dark:text-white transition-colors duration-300 mr-3">the</span>
-          <span className="text-6xl md:text-8xl lg:text-9xl font-black text-brand-blue drop-shadow-[0_0_30px_rgba(108,180,238,0.3)] dark:drop-shadow-[0_0_30px_rgba(108,180,238,0.6)]">
-            ACM
-          </span>
-          <span className="text-3xl md:text-4xl lg:text-5xl font-semibold text-brand-navy dark:text-white transition-colors duration-300 ml-2">-way</span>
-        </div>
       </Hero>
 
       <About />
@@ -144,6 +179,7 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
+        <MotionConfig reducedMotion="user">
         <div className="relative min-h-screen flex flex-col w-full overflow-x-hidden bg-white dark:bg-black transition-colors duration-300">
 
           {/* Initial boot loader overlay with backdrop blur */}
@@ -163,6 +199,7 @@ function App() {
                   <Routes>
                     <Route path="/sigs/:id" element={<SigDetailsPage />} />
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<AboutTeamPage />} />
                     <Route path="/documents" element={<DocumentPage />} />
                     <Route path="/documents/:id" element={<DocumentPage />} />
                     <Route path="/project-proposal" element={<ProjectProposalsPage />} />
@@ -182,6 +219,7 @@ function App() {
             </>
           )}
         </div>
+        </MotionConfig>
       </Router>
     </ErrorBoundary>
   );

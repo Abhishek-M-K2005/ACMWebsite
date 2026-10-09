@@ -1,43 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, ArrowRight, Clock, X } from 'lucide-react';
 import Hero from '../ui/Hero';
 import { api } from '../../services/api';
 import { handleImageError } from '../../lib/utils';
-
-// --- DUMMY DATA FALLBACK ---
-const dummyEvents = [
-    {
-        id: "mock-1",
-        title: "Innovision 2026: Hack the Future",
-        date: "October 15-17, 2026",
-        time: "48 Hour Hackathon",
-        location: "Main Auditorium, NITK",
-        category: "Flagship Event",
-        description: "Join the largest annual hackathon at NITK. Build cutting-edge solutions using AI, Web3, and Cloud native technologies. Massive prizes to be won!",
-        image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000&auto=format&fit=crop"
-    },
-    {
-        id: "mock-2",
-        title: "System Design Masterclass",
-        date: "September 24, 2026",
-        time: "5:30 PM - 7:30 PM",
-        location: "LHC-C, Seminar Hall",
-        category: "Workshop",
-        description: "An intensive teardown of distributed systems. Learn how companies like Netflix and Uber design for scale, fault tolerance, and high availability.",
-        image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop"
-    },
-    {
-        id: "mock-3",
-        title: "Open Source Contrib-a-thon",
-        date: "November 5, 2026",
-        time: "10:00 AM - 5:00 PM",
-        location: "CCC / Online",
-        category: "Community",
-        description: "Kickstart your open-source journey. We will be guiding beginners through their first PRs in major repositories, celebrating Hacktoberfest.",
-        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"
-    }
-];
 
 // --- ANIMATION VARIANTS ---
 const containerVariants = {
@@ -58,33 +24,92 @@ const cardVariants = {
 };
 
 export default function EventsPage() {
-    const [events, setEvents] = useState(dummyEvents);
+    const [events, setEvents] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
     useEffect(() => {
-        const loadLiveEvents = async () => {
-            const data = await api.getEvents();
-            if (data && data.length > 0) {
-                const formatted = data.map(ev => ({
-                    id: ev.id,
-                    title: ev.title,
-                    date: ev.start_time ? new Date(ev.start_time).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "Coming Soon",
-                    time: ev.start_time ? new Date(ev.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : "TBA",
-                    location: ev.location || "NITK Surathkal",
-                    category: ev.is_sub_event ? "Sub-Event" : "Flagship Event",
-                    description: ev.description || "Join us for this exciting technical session.",
-                    image: ev.cover_image_url || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000&auto=format&fit=crop",
-                    sub_events: ev.sub_events || []
-                }));
-                setEvents(formatted);
+        let isMounted = true;
+        api.getEvents().then((data) => {
+            if (!isMounted) return;
+            if (Array.isArray(data)) {
+                const checkedAt = Date.now();
+                setEvents(data.map((event) => ({
+                    ...event,
+                    date: event.start_time
+                        ? new Date(event.start_time).toLocaleDateString(undefined, { dateStyle: 'long' })
+                        : 'Date to be announced',
+                    time: event.start_time
+                        ? new Date(event.start_time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+                        : null,
+                    image: event.cover_image_url || null,
+                    sub_events: event.sub_events || [],
+                    isPast: Boolean(event.start_time)
+                        && new Date(event.end_time || event.start_time).getTime() < checkedAt,
+                })));
+            } else {
+                setLoadError(true);
             }
-        };
-        loadLiveEvents();
+            setIsLoading(false);
+        }).catch(() => {
+            if (!isMounted) return;
+            setLoadError(true);
+            setIsLoading(false);
+        });
+        return () => { isMounted = false; };
     }, []);
+
+    const [upcomingEvents, pastEvents] = events.reduce((groups, event) => {
+        groups[event.isPast ? 1 : 0].push(event);
+        return groups;
+    }, [[], []]);
+
+    useEffect(() => {
+        if (!selectedEvent) return undefined;
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') setSelectedEvent(null);
+        };
+        window.addEventListener('keydown', closeOnEscape);
+        return () => window.removeEventListener('keydown', closeOnEscape);
+    }, [selectedEvent]);
+
+    const renderEventCard = (event) => (
+        <motion.article
+            key={event.id}
+            variants={cardVariants}
+            className="group flex flex-col overflow-hidden rounded-3xl border border-black/10 bg-black/[0.02] shadow-lg transition-colors hover:border-brand-blue/50 dark:border-white/10 dark:bg-white/[0.02]"
+        >
+            {event.image && (
+                <div className="h-48 w-full overflow-hidden bg-black/10">
+                    <img src={event.image} onError={handleImageError} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                </div>
+            )}
+            <div className="flex flex-grow flex-col p-6 sm:p-8">
+                <span className="mb-3 w-fit rounded-full border border-brand-blue/20 bg-brand-blue/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-blue">
+                    {event.is_sub_event ? 'Sub-event' : event.is_intra_club ? 'Chapter event' : 'Open event'}
+                </span>
+                <h3 className="mb-4 text-xl font-bold text-brand-navy dark:text-white sm:text-2xl">{event.title}</h3>
+                <div className="mb-5 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p className="flex items-start gap-2"><Calendar aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-brand-blue" />{event.date}{event.end_time && event.start_time && new Date(event.end_time).toDateString() !== new Date(event.start_time).toDateString() ? ` – ${new Date(event.end_time).toLocaleDateString(undefined, { dateStyle: 'long' })}` : ''}</p>
+                    {event.time && <p className="flex items-start gap-2"><Clock aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-brand-blue" />{event.time}{event.end_time ? ` – ${new Date(event.end_time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}` : ''}</p>}
+                    {event.location && <p className="flex items-start gap-2"><MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-brand-blue" />{event.location}</p>}
+                </div>
+                {event.description && <p className="mb-6 flex-grow text-sm leading-relaxed text-gray-600 dark:text-gray-400">{event.description}</p>}
+                <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-black/10 pt-4 text-sm dark:border-white/10">
+                    <button type="button" onClick={() => setSelectedEvent(event)} className="inline-flex min-h-11 items-center gap-2 font-bold uppercase tracking-wide text-brand-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue">
+                        Event details <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                    </button>
+                    {event.link && <a href={event.link} target="_blank" rel="noopener noreferrer" aria-label={`Open registration or event information for ${event.title} in a new tab`} className="inline-flex min-h-11 items-center font-semibold text-brand-blue underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue">Registration / event link <span className="sr-only">(opens in a new tab)</span></a>}
+                </div>
+            </div>
+        </motion.article>
+    );
+
     return (
         <main className="flex-grow w-full">
             {/* 1. HERO SECTION */}
-            <Hero>
+            <Hero description="Browse ACM NITK events and check each listing for dates, venue, and participation details.">
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Discover our
                 </span>
@@ -101,11 +126,14 @@ export default function EventsPage() {
 
                 <div className="max-w-7xl mx-auto relative z-10">
 
-                    <div className="flex items-center gap-3 mb-16">
+                    <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
                         <div className="h-[1px] w-8 bg-brand-blue"></div>
                         <h2 className="text-xs font-bold tracking-[0.2em] text-brand-blue uppercase">
                             Upcoming & Ongoing
                         </h2>
+                      </div>
+                      <a href="#past-events" className="text-sm font-semibold text-brand-blue underline underline-offset-4">Browse past events</a>
                     </div>
 
                     <motion.div
@@ -115,61 +143,23 @@ export default function EventsPage() {
                         viewport={{ once: true, margin: "-50px" }}
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                     >
-                        {events.map((event) => (
-                            <motion.div
-                                key={event.id}
-                                variants={cardVariants}
-                                className="group flex flex-col rounded-3xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-sm overflow-hidden hover:bg-black/[0.04] dark:hover:bg-white/[0.04] hover:border-brand-blue/50 transition-all duration-500 shadow-lg"
-                            >
-                                {/* Event Image */}
-                                <div className="relative h-48 w-full overflow-hidden">
-                                    <div className="absolute inset-0 bg-brand-navy/20 dark:bg-black/40 z-10 group-hover:bg-transparent transition-colors duration-500" />
-                                    <img
-                                        src={event.image}
-                                        onError={handleImageError}
-                                        alt={event.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                    />
-                                    <div className="absolute top-4 right-4 z-20 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-wider uppercase">
-                                        {event.category}
-                                    </div>
-                                </div>
-
-                                {/* Event Details */}
-                                <div className="p-8 flex flex-col flex-grow">
-                                    <h3 className="text-2xl font-bold text-brand-navy dark:text-white mb-4 transition-colors duration-300">
-                                        {event.title}
-                                    </h3>
-
-                                    <div className="space-y-3 mb-6 flex-grow">
-                                        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                            <Calendar className="w-4 h-4 text-brand-blue shrink-0" />
-                                            <span>{event.date}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                            <Clock className="w-4 h-4 text-brand-blue shrink-0" />
-                                            <span>{event.time}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                            <MapPin className="w-4 h-4 text-brand-blue shrink-0" />
-                                            <span>{event.location}</span>
-                                        </div>
-                                    </div>
-
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-8 line-clamp-3">
-                                        {event.description}
-                                    </p>
-
-                                    <button 
-                                        onClick={() => setSelectedEvent(event)}
-                                        className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase group-hover:text-indigo-400 transition-colors duration-300 mt-auto w-fit"
-                                    >
-                                        View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
+                        {isLoading && <p className="col-span-full py-10 text-center text-gray-500" role="status">Loading chapter events…</p>}
+                        {!isLoading && loadError && <p className="col-span-full py-10 text-center text-gray-500">Events are temporarily unavailable. Please try again later.</p>}
+                        {!isLoading && !loadError && upcomingEvents.length === 0 && <p className="col-span-full py-10 text-center text-gray-500">No upcoming events are listed right now. Check back for chapter updates.</p>}
+                        {!isLoading && upcomingEvents.map(renderEventCard)}
                     </motion.div>
+
+                    <section id="past-events" className="mt-24 scroll-mt-24">
+                      <div className="mb-8 flex items-center gap-3">
+                        <div className="h-px w-8 bg-brand-blue" />
+                        <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-brand-blue">Past Events</h2>
+                      </div>
+                      {pastEvents.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">{pastEvents.map(renderEventCard)}</div>
+                      ) : (
+                        <p className="py-6 text-sm text-gray-500">Past event records and recaps will appear here when available.</p>
+                      )}
+                    </section>
 
                 </div>
             </section>
@@ -179,6 +169,9 @@ export default function EventsPage() {
                 {selectedEvent && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="event-dialog-title"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -192,8 +185,10 @@ export default function EventsPage() {
                             className="relative w-full max-w-2xl bg-white dark:bg-[#111] rounded-3xl shadow-2xl p-8 border border-black/10 dark:border-white/10 z-10 max-h-[85vh] overflow-y-auto"
                         >
                             <button
+                                type="button"
+                                aria-label="Close event details"
                                 onClick={() => setSelectedEvent(null)}
-                                className="absolute top-6 right-6 text-gray-400 hover:text-brand-navy dark:hover:text-white transition-colors"
+                                className="absolute right-4 top-4 rounded-lg p-2 text-gray-500 transition-colors hover:text-brand-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-blue dark:hover:text-white sm:right-6 sm:top-6"
                             >
                                 <X className="w-6 h-6" />
                             </button>
@@ -202,13 +197,14 @@ export default function EventsPage() {
                                     src={selectedEvent.image}
                                     onError={handleImageError}
                                     alt={selectedEvent.title}
+                                        decoding="async"
                                     className="w-full h-full object-cover"
                                 />
                             </div>
                             <span className="px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-xs font-bold tracking-wider uppercase mb-3 inline-block">
                                 {selectedEvent.category}
                             </span>
-                            <h2 className="text-3xl font-black text-brand-navy dark:text-white mb-4">
+                            <h2 id="event-dialog-title" className="text-3xl font-black text-brand-navy dark:text-white mb-4">
                                 {selectedEvent.title}
                             </h2>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 mb-6 border-y border-black/10 dark:border-white/10 text-sm text-gray-600 dark:text-gray-300">
@@ -228,6 +224,15 @@ export default function EventsPage() {
                             <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                                 {selectedEvent.description}
                             </p>
+                            {(selectedEvent.organizer || selectedEvent.contact_email) && <div className="mb-6 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                              {selectedEvent.organizer && <p><strong>Organizer:</strong> {selectedEvent.organizer}</p>}
+                              {selectedEvent.contact_email && <p><strong>Contact:</strong> <a className="text-brand-blue underline" href={`mailto:${selectedEvent.contact_email}`}>{selectedEvent.contact_email}</a></p>}
+                            </div>}
+                            {(selectedEvent.recap_url || selectedEvent.resources_url) && <div className="mb-6 flex flex-wrap gap-4">
+                              {selectedEvent.recap_url && <a className="text-sm font-semibold text-brand-blue underline" href={selectedEvent.recap_url} target="_blank" rel="noopener noreferrer">Event recap</a>}
+                              {selectedEvent.resources_url && <a className="text-sm font-semibold text-brand-blue underline" href={selectedEvent.resources_url} target="_blank" rel="noopener noreferrer">Slides and resources</a>}
+                            </div>}
+                            {selectedEvent.link && <div className="mb-6"><a href={selectedEvent.link} target="_blank" rel="noopener noreferrer" aria-label={`Open registration or event information for ${selectedEvent.title} in a new tab`} className="inline-flex min-h-11 items-center rounded-full bg-brand-blue px-5 py-2 font-bold text-brand-navy">Registration / event link <span className="sr-only">(opens in a new tab)</span></a><p className="mt-2 text-xs text-gray-500">This opens an external page. Review its form for details about requested information and how it will be used.</p></div>}
                             {selectedEvent.sub_events && selectedEvent.sub_events.length > 0 && (
                                 <div className="pt-4 border-t border-black/10 dark:border-white/10">
                                     <h4 className="font-bold text-lg mb-3">Sub-Events & Schedule</h4>

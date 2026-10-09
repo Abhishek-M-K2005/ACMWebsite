@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Code2, Cpu, Wrench, Briefcase, ArrowRight, FileText } from 'lucide-react';
@@ -71,7 +71,7 @@ export default function ProjectProposalsPage() {
 
     return (
         <main className="flex-grow w-full">
-            <Hero>
+            <Hero description="Find ACM NITK Yantras and learn how to bring a project idea to life with the chapter.">
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Explore our
                 </span>

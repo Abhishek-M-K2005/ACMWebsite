@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Sparkles, ZoomIn, X } from 'lucide-react';
 import { cn, handleImageError } from '../../lib/utils';
@@ -46,6 +46,7 @@ export default function AceternityParallaxGallery({ items = [], sigName = '' }) 
           onError={handleImageError}
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-65 group-hover:opacity-90 transition-opacity duration-300" />
         <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-brand-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -70,7 +71,7 @@ export default function AceternityParallaxGallery({ items = [], sigName = '' }) 
             {item.title}
           </h4>
           {item.description && (
-            <p className="text-xs text-gray-300 font-light line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-xs text-gray-300 font-light line-clamp-2 leading-relaxed">
               {item.description}
             </p>
           )}

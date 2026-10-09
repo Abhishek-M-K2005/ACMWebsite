@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ArrowRight, BookOpen } from 'lucide-react';
@@ -69,7 +68,7 @@ const cardVariants = {
 export default function BlogPage() {
     return (
         <main className="flex-grow w-full">
-            <Hero>
+            <Hero description="Browse computing publications and resources selected by ACM NITK.">
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Read our
                 </span>

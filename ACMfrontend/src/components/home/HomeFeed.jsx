@@ -1,105 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   Calendar, MapPin, ArrowRight, User, BookOpen, 
-  Sparkles, ShieldCheck, Lock, ExternalLink 
+  Sparkles, ShieldCheck, Lock 
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { cn, handleImageError } from '../../lib/utils';
 
-// Fallback events (Open public events)
-const fallbackOpenEvents = [
-  {
-    id: "evt-1",
-    title: "Innovision 2026: Hack the Future",
-    start_time: "2026-10-15T09:00:00Z",
-    location: "Main Auditorium, NITK",
-    description: "The largest annual flagship hackathon at NITK. Build cutting-edge solutions across AI, Systems, and Distributed Computing with mentors.",
-    cover_image_url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000&auto=format&fit=crop",
-    is_intra_club: false
-  },
-  {
-    id: "evt-2",
-    title: "System Design & Distributed Scalability Masterclass",
-    start_time: "2026-10-24T17:30:00Z",
-    location: "LHC-C, Seminar Hall",
-    description: "An intensive architectural teardown of large-scale distributed systems, database sharding, and high-throughput pipelines.",
-    cover_image_url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop",
-    is_intra_club: false
-  }
-];
-
-// Fallback Intra-Club Event (displayed when user is logged in)
-const fallbackIntraEvents = [
-  {
-    id: "evt-intra-1",
-    title: "ACM Intra-Club Project Review & SIG Leads Sprint",
-    start_time: "2026-10-12T18:00:00Z",
-    location: "ACM Clubroom / Discord",
-    description: "Internal sprint for active chapter members and SIG leads to evaluate milestone deliverables and hardware allocations.",
-    cover_image_url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop",
-    is_intra_club: true
-  }
-];
-
-// Fallback blogs
-const fallbackBlogs = [
-  {
-    id: "blog-1",
-    title: "Building Scalable Systems for Innovision 2026",
-    writer_name: "Sanganitra Team",
-    published_at: "2026-09-05T12:00:00Z",
-    subtitle: "How our backend engineering team handled a 500% spike in traffic during registrations using Redis caching and Go microservices.",
-    cover_image_url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop"
-  },
-  {
-    id: "blog-2",
-    title: "The Ultimate Guide to Open Source Contributions",
-    writer_name: "Vidyut SIG",
-    published_at: "2026-08-22T12:00:00Z",
-    subtitle: "A step-by-step blueprint from NITK seniors on navigating massive codebases and submitting first-time pull requests.",
-    cover_image_url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"
-  },
-  {
-    id: "blog-3",
-    title: "Mastering Dynamic Programming for ICPC",
-    writer_name: "Karyavarta Competitive Team",
-    published_at: "2026-07-14T12:00:00Z",
-    subtitle: "Unpacking the 5 core dynamic programming problem paradigms for collegiate competitive programming contests.",
-    cover_image_url: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=1000&auto=format&fit=crop"
-  }
-];
-
 export default function HomeFeed() {
   const [events, setEvents] = useState([]);
   const [blogs, setBlogs] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [eventsStatus, setEventsStatus] = useState('loading');
+  const [blogsStatus, setBlogsStatus] = useState('loading');
+  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(api.getCurrentUser()));
 
   useEffect(() => {
-    const user = api.getCurrentUser();
-    setIsLoggedIn(!!user);
-    setCurrentUser(user);
+    let isMounted = true;
 
-    // Fetch live events (will include intra-club if authenticated)
-    api.getEvents().then((data) => {
-      if (data && data.length > 0) {
-        setEvents(data.slice(0, 4));
-      } else {
-        setEvents(user ? [...fallbackIntraEvents, ...fallbackOpenEvents] : fallbackOpenEvents);
-      }
-    });
+    const loadEvents = () => {
+      api.getEvents().then((data) => {
+        if (!isMounted) return;
+        if (data) {
+          const now = Date.now();
+          setEvents(data
+            .filter((event) => !event.start_time || new Date(event.end_time || event.start_time).getTime() >= now)
+            .sort((a, b) => new Date(a.start_time || '9999-12-31') - new Date(b.start_time || '9999-12-31'))
+            .slice(0, 4));
+          setEventsStatus('loaded');
+        } else {
+          setEventsStatus('error');
+        }
+      });
+    };
+
+    const handleAuthChange = () => {
+      setIsLoggedIn(Boolean(api.getCurrentUser()));
+      setEventsStatus('loading');
+      loadEvents();
+    };
+    window.addEventListener('acm-auth-changed', handleAuthChange);
+    loadEvents();
 
     // Fetch live blogs
     api.getBlogs().then((data) => {
-      if (data && data.length > 0) {
-        setBlogs(data.slice(0, 3));
+      if (!isMounted) return;
+      if (data) {
+        setBlogs(data
+          .sort((a, b) => new Date(b.published_at || b.created_at || 0) - new Date(a.published_at || a.created_at || 0))
+          .slice(0, 3));
+        setBlogsStatus('loaded');
       } else {
-        setBlogs(fallbackBlogs);
+        setBlogsStatus('error');
       }
     });
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('acm-auth-changed', handleAuthChange);
+    };
   }, []);
+
+  const nextEvent = events[0];
+  const remainingEvents = events.slice(1);
 
   return (
     <section className="relative w-full py-28 px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300 overflow-hidden">
@@ -151,9 +114,56 @@ export default function HomeFeed() {
             </div>
           </div>
 
+          {eventsStatus === 'loaded' && nextEvent && (
+            <article className="relative mb-8 overflow-hidden rounded-3xl border border-brand-blue/25 bg-gradient-to-r from-brand-blue/[0.12] via-brand-blue/[0.05] to-transparent p-6 shadow-sm dark:from-brand-blue/20 dark:via-brand-blue/[0.08] md:p-8">
+              <div className="absolute -right-10 -top-16 h-48 w-48 rounded-full bg-brand-blue/10 blur-3xl" aria-hidden="true" />
+              <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                <div className="min-w-0">
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-blue px-3 py-1 text-[10px] font-black uppercase tracking-wider text-brand-navy">
+                      <Sparkles className="h-3 w-3" /> Next up
+                    </span>
+                    {nextEvent.is_intra_club && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-brand-blue/30 bg-white/50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-brand-blue dark:bg-black/20">
+                        <Lock className="h-3 w-3" /> Intra-club
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-2xl font-black tracking-tight md:text-3xl">
+                    {nextEvent.title || 'Upcoming chapter event'}
+                  </h3>
+                  <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
+                    <span className="inline-flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-brand-blue" />
+                      {nextEvent.start_time
+                        ? new Date(nextEvent.start_time).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+                        : 'Date to be announced'}
+                    </span>
+                    {nextEvent.location && (
+                      <span className="inline-flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-brand-blue" /> {nextEvent.location}
+                      </span>
+                    )}
+                  </div>
+                  {nextEvent.description && (
+                    <p className="mt-3 max-w-3xl text-sm leading-relaxed text-gray-600 dark:text-gray-300 line-clamp-2">
+                      {nextEvent.description}
+                    </p>
+                  )}
+                </div>
+                <Link
+                  to="/events"
+                  className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-full bg-brand-blue px-5 py-3 text-sm font-bold text-brand-navy transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue md:self-center"
+                >
+                  Event details <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </article>
+          )}
+
           {/* Events Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event, idx) => {
+            {remainingEvents.map((event, idx) => {
               const isIntra = event.is_intra_club;
               const dateStr = event.start_time 
                 ? new Date(event.start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -182,6 +192,8 @@ export default function HomeFeed() {
                           src={event.cover_image_url}
                           alt={event.title}
                           onError={handleImageError}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
@@ -235,6 +247,9 @@ export default function HomeFeed() {
                 </motion.div>
               );
             })}
+            {eventsStatus === 'loading' && <p className="col-span-full py-8 text-sm text-gray-500" role="status">Loading chapter events…</p>}
+            {eventsStatus === 'error' && <p className="col-span-full py-8 text-sm text-gray-500">Events are temporarily unavailable. Please try again later.</p>}
+            {eventsStatus === 'loaded' && events.length === 0 && <p className="col-span-full py-8 text-sm text-gray-500">No upcoming events are listed right now. Check the Events page for updates.</p>}
           </div>
 
           <div className="mt-8 text-center sm:hidden">
@@ -298,6 +313,8 @@ export default function HomeFeed() {
                           src={post.cover_image_url}
                           alt={post.title}
                           onError={handleImageError}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
@@ -335,6 +352,9 @@ export default function HomeFeed() {
                 </motion.article>
               );
             })}
+            {blogsStatus === 'loading' && <p className="col-span-full py-8 text-sm text-gray-500" role="status">Loading chapter articles…</p>}
+            {blogsStatus === 'error' && <p className="col-span-full py-8 text-sm text-gray-500">Chapter articles are temporarily unavailable. Please try again later.</p>}
+            {blogsStatus === 'loaded' && blogs.length === 0 && <p className="col-span-full py-8 text-sm text-gray-500">No recent chapter articles are available yet.</p>}
           </div>
         </div>
 

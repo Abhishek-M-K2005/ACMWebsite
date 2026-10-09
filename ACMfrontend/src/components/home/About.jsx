@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Users, Lightbulb, Rocket, ChevronRight } from 'lucide-react';
@@ -85,7 +84,7 @@ export default function About() {
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300 flex-grow">
               We organize a plethora of events covering most fields of engineering like KEP's, guest lectures, and workshops to give students exposure to the worldwide computing sphere.
             </p>
-            <Link to="/events" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-fit">
+            <Link to="/events" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase transition-colors duration-300 w-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue">
               Explore Events <ChevronRight className="w-4 h-4" />
             </Link>
           </motion.div>
@@ -99,7 +98,7 @@ export default function About() {
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300 flex-grow">
               Through rigorous coding contests and hackathons, we challenge students to push their boundaries, understand modern tech stacks, and develop real-world problem-solving skills.
             </p>
-            <Link to="/project-expo" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-fit">
+            <Link to="/project-expo" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase transition-colors duration-300 w-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue">
               See Projects <ChevronRight className="w-4 h-4" />
             </Link>
           </motion.div>
@@ -115,7 +114,7 @@ export default function About() {
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-6 transition-colors duration-300 flex-grow">
                 As a chapter of the world's largest educational and scientific computing society, we provide resources, networking opportunities, and a platform to connect with industry leaders.
               </p>
-              <Link to="/project-proposal" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-fit">
+              <Link to="/project-proposal" className="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-blue uppercase transition-colors duration-300 w-fit focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue">
                 Explore Proposals <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
