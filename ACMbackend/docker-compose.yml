@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: acm_mysql
+    restart: always
+    network_mode: "host"
+    command: --port=3307
+    environment:
+      MYSQL_ROOT_PASSWORD: 'ACM@nitk2026'
+      MYSQL_DATABASE: acm_platform
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: acm_rails
+    restart: always
+    network_mode: "host"
+    command: bin/rails server -b 0.0.0.0 -p 3000
+    environment:
+      - DATABASE_URL=mysql2://root:ACM%40nitk2026@127.0.0.1:3307/acm_platform
+      - RAILS_ENV=production
+      - RAILS_SERVE_STATIC_FILES=true
+      - SECRET_KEY_BASE=180cf2b7ec43b83bfb029df7bc43c82df594fd81b4c59d04d15232f08d10bbd6ccb12efd1f8f4cd46764ca67ab5ae80ed569e9318a6f5e54c5d7a5438a228322
+    volumes:
+      - ./public/uploads:/rails/public/uploads 
+      - ./storage:/rails/storage
+
+volumes:
+  db_data:
