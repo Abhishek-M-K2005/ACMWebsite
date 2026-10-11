@@ -19,11 +19,11 @@ export default function AboutTeamPage() {
   return (
     <main className="flex-grow w-full">
       <Hero description="Learn about ACM NITK's place at NITK Surathkal, the chapter's history, and how to reach the current team.">
-        <span className="text-5xl md:text-7xl font-black text-brand-blue">About &amp; Team</span>
+        <span className="text-4xl sm:text-5xl md:text-7xl font-black text-brand-blue">About &amp; Team</span>
       </Hero>
 
-      <div className="relative mx-auto max-w-5xl space-y-8 px-6 pb-28 text-brand-navy dark:text-white md:px-12">
-        <section className="rounded-3xl border border-black/10 bg-black/[0.02] p-7 dark:border-white/10 dark:bg-white/[0.03] md:p-10">
+      <div className="relative mx-auto max-w-5xl space-y-8 px-4 pb-20 sm:px-6 md:px-12 text-brand-navy dark:text-white">
+        <section className="rounded-3xl border border-black/10 bg-black/[0.02] p-5 sm:p-7 dark:border-white/10 dark:bg-white/[0.03] md:p-10">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-brand-blue">Who we are</p>
           <h2 className="mb-4 text-3xl font-bold">A student chapter at NITK Surathkal</h2>
           <p className="leading-relaxed text-gray-600 dark:text-gray-300">

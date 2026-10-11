@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, PenLine, Sparkles, Image, Tag, Send } from 'lucide-react';
 import { api } from '../../services/api';

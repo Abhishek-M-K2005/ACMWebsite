@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ExternalLink, ArrowRight, BookOpen } from 'lucide-react';
@@ -68,16 +69,16 @@ const cardVariants = {
 export default function BlogPage() {
     return (
         <main className="flex-grow w-full">
-            <Hero description="Browse computing publications and resources selected by ACM NITK.">
+            <Hero>
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Read our
                 </span>
-                <span className="text-5xl md:text-7xl lg:text-8xl font-black text-brand-blue drop-shadow-[0_0_30px_rgba(108,180,238,0.3)] dark:drop-shadow-[0_0_30px_rgba(108,180,238,0.6)]">
+                <span className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-brand-blue drop-shadow-[0_0_30px_rgba(108,180,238,0.3)] dark:drop-shadow-[0_0_30px_rgba(108,180,238,0.6)]">
                     Publications
                 </span>
             </Hero>
 
-            <section className="relative w-full pb-32 px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300">
+            <section className="relative w-full pb-32 px-4 sm:px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[150px] pointer-events-none z-0" />
 
                 <div className="max-w-7xl mx-auto relative z-10">

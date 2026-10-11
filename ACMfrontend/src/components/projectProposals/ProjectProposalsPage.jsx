@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Code2, Cpu, Wrench, Briefcase, ArrowRight, FileText } from 'lucide-react';
@@ -71,16 +71,16 @@ export default function ProjectProposalsPage() {
 
     return (
         <main className="flex-grow w-full">
-            <Hero description="Find ACM NITK Yantras and learn how to bring a project idea to life with the chapter.">
+            <Hero>
                 <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
                     Explore our
                 </span>
-                <span className="text-5xl md:text-7xl lg:text-8xl font-black text-brand-blue drop-shadow-[0_0_30px_rgba(108,180,238,0.3)] dark:drop-shadow-[0_0_30px_rgba(108,180,238,0.6)]">
+                <span className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-brand-blue drop-shadow-[0_0_30px_rgba(108,180,238,0.3)] dark:drop-shadow-[0_0_30px_rgba(108,180,238,0.6)]">
                     Proposals
                 </span>
             </Hero>
 
-            <section className="relative w-full pb-32 px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300">
+            <section className="relative w-full pb-32 px-4 sm:px-6 md:px-12 lg:px-24 bg-white text-brand-navy dark:bg-black dark:text-white transition-colors duration-300">
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className="flex items-center gap-3 mb-16">
                         <div className="h-[1px] w-8 bg-brand-blue"></div>
@@ -124,7 +124,7 @@ export default function ProjectProposalsPage() {
                                         </div>
 
                                         {/* Content */}
-                                        <div className="p-8 flex flex-col justify-center flex-grow">
+                                        <div className="p-5 sm:p-8 flex flex-col justify-center flex-grow">
                                             <h3 className="text-2xl font-bold text-brand-navy dark:text-white mb-1 transition-colors duration-300">
                                                 {sig.name}
                                             </h3>

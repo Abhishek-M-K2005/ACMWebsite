@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CircleUserRound, X, Mail, Lock, LogIn, LogOut, CheckCircle, KeyRound } from 'lucide-react';
 import { api } from '../../services/api';
 
-export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthChange }) {
+export default function FloatingLogin({ isOpen: controlledOpen, onClose }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : internalOpen;
@@ -19,7 +19,7 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthC
     setPwdSuccess('');
   };
 
-  const [currentUser, setCurrentUser] = useState(() => api.getCurrentUser());
+  const [currentUser, setCurrentUser] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -36,10 +36,8 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthC
   const [isPwdLoading, setIsPwdLoading] = useState(false);
 
   useEffect(() => {
-    const refreshUser = () => setCurrentUser(api.getCurrentUser());
-    window.addEventListener('acm-auth-changed', refreshUser);
-    return () => window.removeEventListener('acm-auth-changed', refreshUser);
-  }, []);
+    setCurrentUser(api.getCurrentUser());
+  }, [isOpen]);
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -94,8 +92,6 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthC
       const data = await api.login(cleanEmail, password);
       api.saveAuth(data.token, data.user);
       setCurrentUser(data.user);
-      onAuthChange?.(data.user);
-      window.dispatchEvent(new Event('acm-auth-changed'));
       setSuccessMsg(`Welcome, ${data.user.name || 'Member'}!`);
       setTimeout(() => {
         handleClose();
@@ -111,8 +107,6 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthC
   const handleLogout = () => {
     api.logout();
     setCurrentUser(null);
-    onAuthChange?.(null);
-    window.dispatchEvent(new Event('acm-auth-changed'));
     handleClose();
   };
 
@@ -148,7 +142,7 @@ export default function FloatingLogin({ isOpen: controlledOpen, onClose, onAuthC
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-white dark:bg-[#111] rounded-3xl shadow-2xl p-8 border border-black/10 dark:border-white/10 z-10"
+              className="relative w-full max-w-md bg-white dark:bg-[#111] rounded-3xl shadow-2xl p-6 sm:p-8 border border-black/10 dark:border-white/10 z-10 max-h-[88vh] overflow-y-auto"
             >
               <button 
                 onClick={handleClose} 

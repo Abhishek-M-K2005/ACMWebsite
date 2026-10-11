@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
@@ -60,7 +61,7 @@ export default function DocumentViewer({ project = {} }) {
           </div>
 
           {/* Markdown Content rendered via Tailwind Typography */}
-          <div className="p-8 md:p-12">
+          <div className="p-5 sm:p-8 md:p-12">
             <article className="prose prose-slate dark:prose-invert max-w-none 
               prose-headings:text-brand-navy dark:prose-headings:text-white 
               prose-a:text-brand-blue hover:prose-a:text-indigo-400

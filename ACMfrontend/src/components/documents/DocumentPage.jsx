@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import Hero from '../ui/Hero';
@@ -41,7 +41,7 @@ export default function DocumentPage() {
 
   return (
     <main className="flex-grow w-full">
-      <Hero description="Browse chapter documents and project resources shared by ACM NITK.">
+      <Hero>
         <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-brand-navy dark:text-white mb-2 transition-colors duration-300">
           Explore our
         </span>

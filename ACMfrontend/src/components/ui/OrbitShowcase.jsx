@@ -24,21 +24,20 @@ const SIG_IMAGES = {
   sahiitya: "/logos/Saahitya.jpg",
   saahitya: "/logos/Saahitya.jpg",
   abhivyakta: "/logos/Abhivyakta.jpeg",
-  krutagnata: "/logos/krutagnata.png",
+  krutagnata: "/logos/ACM.png",
   acmw: "/logos/acmw.png",
 };
 
 const defaultYantras = [
   { name: "Sanganitra", image: "/logos/sanganitra.png" },
+  { name: "Karyavarta", image: "/logos/karyavarta.png" },
+  { name: "Vidyut", image: "/logos/vidyuth.png" },
   { name: "Yantrika", image: "/logos/yantrika.png" },
-  { name: "Vidyuth", image: "/logos/vidyuth.png" },
-  { name: "Kaaryavarta", image: "/logos/karyavarta.png" },
-  { name: "Saahitya", image: "/logos/Saahitya.jpg" },
+  { name: "Sahiitya", image: "/logos/Saahitya.jpg" },
   { name: "Abhivyakta", image: "/logos/Abhivyakta.jpeg" },
-  { name: "Krutagnata", image: "/logos/krutagnata.png" }
+  { name: "Krutagnata", image: "/logos/ACM.png" },
+  { name: "ACMW", image: "/logos/acmw.png" }
 ];
-
-const FALLBACK_IMAGE = "/logos/ACM.svg";
 
 function resolveItem(item) {
   if (typeof item === 'object' && item !== null) {
@@ -46,19 +45,19 @@ function resolveItem(item) {
     const key = name.toLowerCase().trim();
     return {
       name,
-      image: item.image || item.logo || SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : FALLBACK_IMAGE)
+      image: item.image || item.logo || SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : '/logos/ACM.png')
     };
   }
   const str = String(item || '').trim();
   const key = str.toLowerCase();
   return {
     name: str,
-    image: SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : FALLBACK_IMAGE)
+    image: SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : '/logos/ACM.png')
   };
 }
 
 export default function OrbitShowcase({ title = "Our Yantras", items = defaultYantras }) {
-  const [radii, setRadii] = useState({ x: 380, y: 240 });
+  const [radii, setRadii] = useState({ x: 440, y: 205 });
 
   // Controls whether the items are burst out or collapsed in the center
   const [isExpanded, setIsExpanded] = useState(false);
@@ -70,12 +69,14 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
 
   useEffect(() => {
     const updateRadii = () => {
-      if (window.innerWidth < 1024) {
-        // Leave enough room for the orbiting logo circles on narrow screens.
-        const x = Math.min(300, Math.max(128, (window.innerWidth - 64) / 2));
-        setRadii({ x, y: window.innerWidth < 768 ? 220 : 240 });
+      if (window.innerWidth < 480) {
+        setRadii({ x: Math.min(125, Math.max(105, Math.floor(window.innerWidth / 2) - 45)), y: 175 });
+      } else if (window.innerWidth < 768) {
+        setRadii({ x: 155, y: 190 });
+      } else if (window.innerWidth < 1200) {
+        setRadii({ x: 370, y: 195 });
       } else {
-        setRadii({ x: 380, y: 240 });
+        setRadii({ x: 450, y: 205 });
       }
     };
 
@@ -95,7 +96,7 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
   const resolvedItems = (items && items.length > 0 ? items : defaultYantras).map(resolveItem);
 
   return (
-    <section id="yantras" ref={containerRef} className="relative w-full py-48 bg-white dark:bg-black transition-colors duration-300 overflow-hidden flex items-center justify-center min-h-[80vh]">
+    <section ref={containerRef} className="relative w-full py-16 sm:py-24 md:py-32 bg-white dark:bg-black transition-colors duration-300 overflow-hidden flex items-center justify-center min-h-[520px] sm:min-h-[580px] md:min-h-[680px]">
 
       {/* Ambient center blue glow */}
       <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-10 dark:opacity-20 z-0">
@@ -122,9 +123,9 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           whileHover={{ scale: 1.05 }}
-          className="absolute z-20 flex flex-col items-center justify-center w-36 h-36 md:w-48 md:h-48 rounded-full border border-brand-blue/30 bg-white/40 dark:bg-black/40 backdrop-blur-xl shadow-[0_0_40px_rgba(108,180,238,0.2)] cursor-pointer select-none"
+          className="absolute z-20 flex flex-col items-center justify-center w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full border border-brand-blue/30 bg-white/40 dark:bg-black/40 backdrop-blur-xl shadow-[0_0_40px_rgba(108,180,238,0.2)] cursor-pointer select-none"
         >
-          <h3 className="text-xs md:text-sm font-bold tracking-[0.2em] text-brand-blue uppercase text-center leading-relaxed">
+          <h3 className="text-[11px] sm:text-xs md:text-sm font-bold tracking-[0.2em] text-brand-blue uppercase text-center leading-relaxed">
             {title.split(' ').map((word, i) => <React.Fragment key={i}>{word}<br /></React.Fragment>)}
           </h3>
         </motion.div>
@@ -165,7 +166,7 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
                   href="https://acmwnitk.hosting.acm.org"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-2 overflow-hidden"
+                  className="relative flex items-center justify-center w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 lg:w-24 lg:h-24 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-1.5 sm:p-2 md:p-2.5 overflow-hidden"
                   style={{
                     borderColor: `${themeColor}aa`,
                     '--glow-color': themeColor,
@@ -174,18 +175,17 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
                   <img
                     src={item.image}
                     alt={item.name}
-                    className={`w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110 ${item.image === FALLBACK_IMAGE ? 'invert dark:invert-0' : ''}`}
+                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = FALLBACK_IMAGE;
-                      e.target.classList.add('invert', 'dark:invert-0');
+                      e.target.src = "/logos/ACM.png";
                     }}
                   />
                 </a>
               ) : (
                 <Link
-                  to={`/sigs/${item.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`}
-                  className="relative flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-2 overflow-hidden"
+                  to={`/sigs/${item.name.toLowerCase()}`}
+                  className="relative flex items-center justify-center w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 lg:w-24 lg:h-24 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-1.5 sm:p-2 md:p-2.5 overflow-hidden"
                   style={{
                     borderColor: `${themeColor}aa`,
                     '--glow-color': themeColor,
@@ -194,11 +194,10 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
                   <img
                     src={item.image}
                     alt={item.name}
-                    className={`w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110 ${item.image === FALLBACK_IMAGE ? 'invert dark:invert-0' : ''}`}
+                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = FALLBACK_IMAGE;
-                      e.target.classList.add('invert', 'dark:invert-0');
+                      e.target.src = "/logos/ACM.png";
                     }}
                   />
                 </Link>
@@ -207,7 +206,7 @@ export default function OrbitShowcase({ title = "Our Yantras", items = defaultYa
               {/* Tooltip popping up on hover */}
               <span
                 style={{ color: themeColor }}
-                className="absolute -bottom-8 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 pointer-events-none px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 dark:bg-black/90 border border-black/10 dark:border-white/10 shadow-lg transform translate-y-1 group-hover:translate-y-0 group-focus-within:translate-y-0"
+                className="absolute -bottom-9 sm:-bottom-10 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 dark:bg-black/90 border border-black/10 dark:border-white/10 shadow-lg transform translate-y-1 group-hover:translate-y-0"
               >
                 {item.name}
               </span>

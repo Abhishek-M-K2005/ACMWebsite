@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, ZoomIn } from 'lucide-react';
+import { Sparkles, X, ZoomIn, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { cn, handleImageError } from '../../lib/utils';
 
 export default function AceternityGallery({ items = [], sigName = '' }) {
@@ -82,7 +82,6 @@ export default function AceternityGallery({ items = [], sigName = '' }) {
                   onError={handleImageError}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   loading="lazy"
-                  decoding="async"
                 />
 
                 {/* Dark Gradient Overlay for text legibility */}
@@ -114,7 +113,7 @@ export default function AceternityGallery({ items = [], sigName = '' }) {
                     {item.title}
                   </h4>
                   {item.description && (
-                    <p className="text-xs md:text-sm text-gray-300 font-light line-clamp-2 leading-relaxed">
+                    <p className="text-xs md:text-sm text-gray-300 font-light line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {item.description}
                     </p>
                   )}

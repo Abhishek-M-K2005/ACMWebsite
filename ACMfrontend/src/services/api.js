@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://10.14.0.99:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 export async function fetchWithTimeout(resource, options = {}) {
   const { timeout = 15000, ...fetchOptions } = options;
@@ -30,7 +30,7 @@ export const api = {
       const res = await fetchWithTimeout(`${API_BASE_URL}/events`, { headers });
       if (!res.ok) return null;
       const data = await res.json();
-      return Array.isArray(data) ? data : null;
+      return Array.isArray(data) && data.length > 0 ? data : null;
     } catch {
       return null;
     }
@@ -41,7 +41,7 @@ export const api = {
       const res = await fetchWithTimeout(`${API_BASE_URL}/blogs`);
       if (!res.ok) return null;
       const data = await res.json();
-      return Array.isArray(data) ? data : null;
+      return Array.isArray(data) && data.length > 0 ? data : null;
     } catch {
       return null;
     }
@@ -117,10 +117,10 @@ export const api = {
       return await res.json();
     } catch (err) {
       if (err.name === 'TimeoutError' || err.name === 'AbortError') {
-        throw new Error('Connection timed out (15s). Backend server may not be running on http://localhost:3000.', { cause: err });
+        throw new Error('Connection timed out (15s). Backend server may not be running on http://localhost:3000.');
       }
       if (err instanceof TypeError && err.message.toLowerCase().includes('fetch')) {
-        throw new Error('Could not connect to backend server. Ensure it is running on http://localhost:3000.', { cause: err });
+        throw new Error('Could not connect to backend server. Ensure it is running on http://localhost:3000.');
       }
       throw err;
     }
@@ -131,23 +131,27 @@ export const api = {
   },
 
   async createBlog(blogData) {
-    const token = this.getToken();
-    const res = await fetchWithTimeout(`${API_BASE_URL}/blogs`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(blogData)
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const errorMsg = Array.isArray(data.errors)
-        ? data.errors.join(', ')
-        : (data.errors || data.error || 'Failed to create blog post');
-      throw new Error(errorMsg);
+    try {
+      const token = this.getToken();
+      const res = await fetchWithTimeout(`${API_BASE_URL}/blogs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(blogData)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const errorMsg = Array.isArray(data.errors)
+          ? data.errors.join(', ')
+          : (data.errors || data.error || 'Failed to create blog post');
+        throw new Error(errorMsg);
+      }
+      return data;
+    } catch (err) {
+      throw err;
     }
-    return data;
   },
 
   getCurrentUser() {

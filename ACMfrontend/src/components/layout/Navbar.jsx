@@ -6,12 +6,13 @@ import { api } from '../../services/api';
 
 const DEFAULT_YANTRAS = [
   { id: 1, name: "Sanganitra" },
-  { id: 2, name: "Yantrika" },
-  { id: 3, name: "Vidyuth" },
-  { id: 4, name: "Kaaryavarta" },
-  { id: 5, name: "Saahitya" },
+  { id: 2, name: "Karyavarta" },
+  { id: 3, name: "Vidyut" },
+  { id: 4, name: "Yantrika" },
+  { id: 5, name: "Sahiitya" },
   { id: 6, name: "Abhivyakta" },
-  { id: 7, name: "Krutagnata" }
+  { id: 7, name: "Krutagnata" },
+  { id: 8, name: "ACMW" }
 ];
 
 const navLinks = [
@@ -28,7 +29,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [sigs, setSigs] = useState(DEFAULT_YANTRAS);
-  const [currentUser, setCurrentUser] = useState(() => api.getCurrentUser());
   const dropdownRef = useRef(null);
 
   // Fetch SIGs from backend model dynamically
@@ -55,40 +55,29 @@ export default function Navbar({ darkMode, setDarkMode }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Check if the user is authenticated via local storage
+  const currentUser = JSON.parse(localStorage.getItem('acm_user'));
+
   // Track the current route to highlight the active tab
   const location = useLocation();
 
   return (
     <>
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] lg:w-fit max-w-5xl z-40 text-brand-navy dark:text-white transition-colors duration-300">
-
-        <div className="flex items-center justify-between px-6 py-3 rounded-full 
-          bg-brand-blue/10 dark:bg-white/10 
-          backdrop-blur-[24px] backdrop-saturate-150 
-          border border-brand-blue/20 dark:border-white/10 
-          shadow-sm dark:shadow-2xl
-          w-full transition-all duration-300">
-
-          {/* Mobile View: Justified to the right so it doesn't overlap the Floating Logo on the left */}
-          <div className="lg:hidden flex items-center justify-end w-full gap-4">
-            <button type="button" aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'} onClick={() => setDarkMode(!darkMode)} className="p-2 rounded-lg hover:text-brand-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue transition-colors">
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <button type="button" aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue">
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+      {/* ========================================================= */}
+      {/* 1. DESKTOP NAVBAR (lg+): Centered Frosted Glass Capsule   */}
+      {/* ========================================================= */}
+      <nav className="hidden lg:block fixed top-5 left-1/2 -translate-x-1/2 z-40 text-brand-navy dark:text-white transition-colors duration-300 max-w-5xl">
+        <div className="flex items-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-full 
+          bg-white/25 dark:bg-white/[0.08] 
+          bg-gradient-to-b from-white/40 to-white/10 dark:from-white/[0.12] dark:to-transparent 
+          backdrop-blur-2xl backdrop-saturate-200 
+          border border-white/50 dark:border-white/15 
+          shadow-[0_8px_32px_0_rgba(0,0,0,0.1),inset_0_1px_1px_0_rgba(255,255,255,0.45)] 
+          dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.18)]
+          transition-all duration-300">
 
           {/* Desktop Links */}
-          <ul className="hidden lg:flex items-center gap-6 text-sm font-semibold pl-4">
-            <li>
-              <Link
-                to="/"
-                className={`cursor-pointer transition-colors whitespace-nowrap ${location.pathname === '/' ? 'text-brand-blue' : 'hover:text-brand-blue'}`}
-              >
-                Home
-              </Link>
-            </li>
+          <ul className="flex items-center gap-2.5 xl:gap-3.5 text-xs xl:text-[13px] font-semibold pl-1.5">
             <li 
               ref={dropdownRef} 
               className="relative" 
@@ -98,21 +87,23 @@ export default function Navbar({ darkMode, setDarkMode }) {
               <button 
                 type="button"
                 onClick={() => setDropdownOpen((prev) => !prev)} 
-                aria-haspopup="true"
-                aria-expanded={dropdownOpen}
-                className={`flex items-center gap-1 rounded transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue ${
+                className={`flex items-center gap-1 transition-colors ${
                   location.pathname.startsWith('/sigs') ? 'text-brand-blue' : 'hover:text-brand-blue'
                 }`}
+                aria-haspopup="true"
+                aria-expanded={dropdownOpen}
               >
-                Yantras <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                Yantras <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {dropdownOpen && (
-                <div className="absolute left-full top-0 z-50 w-56 pl-3">
+                <div className="absolute top-full pt-3 left-0 w-52 z-50">
                   <ul className="py-2 rounded-2xl 
-                    bg-white/95 dark:bg-black/90 
-                    backdrop-blur-[24px] backdrop-saturate-150 
-                    border border-brand-blue/20 dark:border-white/10 
-                    shadow-xl
+                    bg-white/40 dark:bg-black/40 
+                    bg-gradient-to-b from-white/40 to-white/15 dark:from-white/[0.08] dark:to-transparent 
+                    backdrop-blur-2xl backdrop-saturate-200 
+                    border border-white/40 dark:border-white/15 
+                    shadow-[0_8px_32px_0_rgba(0,0,0,0.15),inset_0_1px_1px_0_rgba(255,255,255,0.4)] 
+                    dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.7),inset_0_1px_1px_0_rgba(255,255,255,0.15)]
                     overflow-hidden">
                     {sigs.map((sig) => {
                       const isAcmw = (sig.name || '').toLowerCase().replace(/[^a-z]/g, '') === 'acmw' || String(sig.id) === '40';
@@ -132,7 +123,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                         );
                       }
 
-                      const sigPath = `/sigs/${sig.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                      const sigPath = `/sigs/${sig.id || sig.name.toLowerCase()}`;
                       const isActive = location.pathname === sigPath;
                       return (
                         <li key={sig.id || sig.name}>
@@ -155,12 +146,13 @@ export default function Navbar({ darkMode, setDarkMode }) {
               )}
             </li>
 
-            {navLinks.slice(1).map((link) => (
+            {navLinks.map((link) => (
               <li key={link.name}>
                 <Link
                   to={link.path}
-                  className={`cursor-pointer transition-colors whitespace-nowrap ${location.pathname === link.path ? "text-brand-blue" : "hover:text-brand-blue"
-                    }`}
+                  className={`cursor-pointer transition-colors whitespace-nowrap ${
+                    location.pathname === link.path ? "text-brand-blue font-bold" : "hover:text-brand-blue"
+                  }`}
                 >
                   {link.name}
                 </Link>
@@ -168,66 +160,92 @@ export default function Navbar({ darkMode, setDarkMode }) {
             ))}
 
             {/* Auth Integration for Desktop */}
-            <li className="flex items-center ml-2">
+            <li className="flex items-center ml-1 sm:ml-1.5">
               {currentUser ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setIsLoginOpen(true)}
-                    className="flex items-center gap-2 text-brand-blue hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-1.5 text-brand-blue hover:opacity-80 transition-opacity"
                     title={`Logged in as ${currentUser.name}. Click to view profile / logout.`}
                   >
-                    <div className="w-7 h-7 rounded-full bg-brand-blue/20 border border-brand-blue/50 flex items-center justify-center overflow-hidden text-xs uppercase font-bold">
+                    <div className="w-6.5 h-6.5 rounded-full bg-brand-blue/20 border border-brand-blue/50 flex items-center justify-center overflow-hidden text-[11px] uppercase font-bold">
                       {currentUser.avatar_url ? (
                         <img src={currentUser.avatar_url} alt={currentUser.name} className="w-full h-full object-cover" />
                       ) : (
                         currentUser.name.charAt(0)
                       )}
                     </div>
-                    <span className="text-xs font-semibold max-w-[100px] truncate">{currentUser.name.split(' ')[0]}</span>
+                    <span className="text-xs font-semibold max-w-[95px] truncate">{currentUser.name.split(' ')[0]}</span>
                   </button>
                   <button
                     onClick={() => {
                       api.logout();
-                      setCurrentUser(null);
-                      window.dispatchEvent(new Event('acm-auth-changed'));
+                      window.location.reload();
                     }}
                     title="Sign Out"
-                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                    className="text-gray-400 hover:text-red-500 transition-colors p-0.5"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-3.5 h-3.5" />
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setIsLoginOpen(true)} className="flex items-center gap-1.5 hover:text-brand-blue transition-colors">
+                <button onClick={() => setIsLoginOpen(true)} className="flex items-center gap-1.5 hover:text-brand-blue transition-colors text-xs sm:text-[13px] font-semibold">
                   <CircleUserRound className="w-4 h-4" /> Login
                 </button>
               )}
             </li>
 
-            <li className="ml-2 border-l border-brand-navy/20 dark:border-white/40 pl-4 shrink-0">
-                <button type="button" aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'} onClick={() => setDarkMode(!darkMode)} className="hover:scale-110 hover:text-brand-blue transition-all flex items-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue">
-                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <li className="ml-1 sm:ml-1.5 border-l border-brand-navy/20 dark:border-white/40 pl-2.5 shrink-0">
+              <button 
+                onClick={() => setDarkMode(!darkMode)} 
+                aria-label="Toggle theme"
+                className="hover:scale-110 hover:text-brand-blue transition-all flex items-center"
+              >
+                {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
             </li>
           </ul>
         </div>
+      </nav>
 
-        {/* Mobile Menu */}
+      {/* ========================================================= */}
+      {/* 2. MOBILE & TABLET NAVBAR (< lg): Sleek Floating Capsule */}
+      {/* ========================================================= */}
+      <div className="lg:hidden fixed top-4 sm:top-5 right-4 sm:right-6 z-50">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-full 
+          bg-white/25 dark:bg-white/[0.08] 
+          bg-gradient-to-b from-white/40 to-white/10 dark:from-white/[0.12] dark:to-transparent 
+          backdrop-blur-2xl backdrop-saturate-200 
+          border border-white/50 dark:border-white/15 
+          shadow-[0_8px_32px_0_rgba(0,0,0,0.1),inset_0_1px_1px_0_rgba(255,255,255,0.45)] 
+          dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.18)]
+          transition-all duration-300">
+          <button 
+            onClick={() => setDarkMode(!darkMode)} 
+            aria-label="Toggle theme"
+            className="p-1.5 hover:text-brand-blue transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          <button 
+            onClick={() => setIsOpen(!isOpen)} 
+            aria-label="Toggle navigation menu"
+            className="p-1.5 hover:text-brand-blue transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Mobile Dropdown Drawer */}
         {isOpen && (
-          <div id="mobile-navigation" className="lg:hidden absolute top-full mt-4 w-full rounded-3xl
-            bg-white/90 dark:bg-black/80 
-            backdrop-blur-[32px] backdrop-saturate-150 
-            border border-brand-blue/20 dark:border-white/10 
-            shadow-xl
-            overflow-hidden flex flex-col p-5 gap-4">
-
-            <Link
-              to="/"
-              onClick={() => setIsOpen(false)}
-              className={`pl-2 text-sm font-medium ${location.pathname === '/' ? 'text-brand-blue font-bold' : 'hover:text-brand-blue'}`}
-            >
-              Home
-            </Link>
+          <div className="absolute right-0 top-full mt-3 w-80 max-w-[calc(100vw-2rem)] rounded-3xl 
+            bg-white/35 dark:bg-neutral-900/85 
+            bg-gradient-to-b from-white/50 to-white/20 dark:from-white/[0.12] dark:to-transparent 
+            backdrop-blur-3xl backdrop-saturate-200 
+            border border-white/50 dark:border-white/15 
+            shadow-[0_16px_40px_0_rgba(0,0,0,0.2),inset_0_1px_1px_0_rgba(255,255,255,0.4)] 
+            dark:shadow-[0_16px_40px_0_rgba(0,0,0,0.8),inset_0_1px_1px_0_rgba(255,255,255,0.15)] 
+            max-h-[82vh] overflow-y-auto flex flex-col p-5 gap-4 z-50">
 
             <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2">Yantras</div>
             <div className="grid grid-cols-2 gap-3 text-sm pl-2">
@@ -248,7 +266,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   );
                 }
 
-                const sigPath = `/sigs/${sig.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                const sigPath = `/sigs/${sig.id || sig.name.toLowerCase()}`;
                 const isActive = location.pathname === sigPath;
                 return (
                   <Link
@@ -267,12 +285,12 @@ export default function Navbar({ darkMode, setDarkMode }) {
 
             <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2 mt-2">Links</div>
             <div className="grid gap-3 text-sm pl-2">
-              {navLinks.slice(1).map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className={`font-medium ${location.pathname === link.path ? "text-brand-blue" : "hover:text-brand-blue"}`}
+                  className={`font-medium ${location.pathname === link.path ? "text-brand-blue font-bold" : "hover:text-brand-blue"}`}
                 >
                   {link.name}
                 </Link>
@@ -296,9 +314,8 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   <button
                     onClick={() => {
                       api.logout();
-                      setCurrentUser(null);
-                      window.dispatchEvent(new Event('acm-auth-changed'));
                       setIsOpen(false);
+                      window.location.reload();
                     }}
                     className="flex items-center gap-1.5 text-xs text-red-500 font-semibold px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
                   >
@@ -317,14 +334,10 @@ export default function Navbar({ darkMode, setDarkMode }) {
 
           </div>
         )}
-      </nav>
+      </div>
 
       {/* Keep the modal isolated from the sticky nav structure */}
-      <FloatingLogin
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onAuthChange={setCurrentUser}
-      />
+      <FloatingLogin isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
 }
