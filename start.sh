@@ -4,12 +4,12 @@ echo "Starting ACM Website Infrastructure..."
 
 # 1. Boot the Backend
 echo "Starting MySQL and Rails Backend..."
-cd ~/acmwebsite/ACMbackend
-docker compose up -d
+cd ACMbackend
+docker compose up -d --build
 
 # 2. Boot the Frontend
 echo "Starting React Frontend..."
-cd ~/acmwebsite/ACMfrontend
+cd ../ACMfrontend
 
 # Kill any existing frontend process to prevent port conflicts
 pkill -f "npm run preview" 2>/dev/null
