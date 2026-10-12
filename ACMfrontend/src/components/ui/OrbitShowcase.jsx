@@ -1,219 +1,64 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { motion } from 'framer-motion';
 
-const rainbowColors = [
-  "#ef4444", // Red
-  "#f97316", // Orange
-  "#eab308", // Yellow
-  "#22c55e", // Green
-  "#0ea5e9", // Sky Blue
-  "#6366f1", // Indigo
-  "#a855f7", // Violet
-  "#ec4899"  // Pink (ACMW)
+const yantras = [
+  { name: "Sanganitra", logo: "/logos/sanganitra.png" },
+  { name: "Yantrika", logo: "/logos/yantrika.png" },
+  { name: "Vidyuth", logo: "/logos/vidyuth.png" },
+  { name: "Kaaryavarta", logo: "/logos/karyavarta.png" },
+  { name: "Saahitya", logo: "/logos/Saahitya.jpg" },
+  { name: "Abhivyakta", logo: "/logos/Abhivyakta.jpeg" },
+  { name: "Krutagnata", logo: "/logos/krutagnata.png" }, // Added Krutagnata here
+  { name: "ACMW", logo: "/logos/acmw.png" }
 ];
 
-// Mapping SIG/Yantra names to circular logo images in public/
-const SIG_IMAGES = {
-  sanganitra: "/logos/sanganitra.png",
-  karyavarta: "/logos/karyavarta.png",
-  kaaryavarta: "/logos/karyavarta.png",
-  vidyut: "/logos/vidyuth.png",
-  vidyuth: "/logos/vidyuth.png",
-  yantrika: "/logos/yantrika.png",
-  sahiitya: "/logos/Saahitya.jpg",
-  saahitya: "/logos/Saahitya.jpg",
-  abhivyakta: "/logos/Abhivyakta.jpeg",
-  krutagnata: "/logos/ACM.png",
-  acmw: "/logos/acmw.png",
-};
-
-const defaultYantras = [
-  { name: "Sanganitra", image: "/logos/sanganitra.png" },
-  { name: "Karyavarta", image: "/logos/karyavarta.png" },
-  { name: "Vidyut", image: "/logos/vidyuth.png" },
-  { name: "Yantrika", image: "/logos/yantrika.png" },
-  { name: "Sahiitya", image: "/logos/Saahitya.jpg" },
-  { name: "Abhivyakta", image: "/logos/Abhivyakta.jpeg" },
-  { name: "Krutagnata", image: "/logos/ACM.png" },
-  { name: "ACMW", image: "/logos/acmw.png" }
-];
-
-function resolveItem(item) {
-  if (typeof item === 'object' && item !== null) {
-    const name = item.name || item.title || 'SIG';
-    const key = name.toLowerCase().trim();
-    return {
-      name,
-      image: item.image || item.logo || SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : '/logos/ACM.png')
-    };
-  }
-  const str = String(item || '').trim();
-  const key = str.toLowerCase();
-  return {
-    name: str,
-    image: SIG_IMAGES[key] || (key === 'acmw' ? '/logos/acmw.png' : '/logos/ACM.png')
-  };
-}
-
-export default function OrbitShowcase({ title = "Our Yantras", items = defaultYantras }) {
-  const [radii, setRadii] = useState({ x: 440, y: 205 });
-
-  // Controls whether the items are burst out or collapsed in the center
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const containerRef = useRef(null);
-
-  // Triggers exactly once when the component enters the viewport
-  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
-
-  useEffect(() => {
-    const updateRadii = () => {
-      if (window.innerWidth < 480) {
-        setRadii({ x: Math.min(125, Math.max(105, Math.floor(window.innerWidth / 2) - 45)), y: 175 });
-      } else if (window.innerWidth < 768) {
-        setRadii({ x: 155, y: 190 });
-      } else if (window.innerWidth < 1200) {
-        setRadii({ x: 370, y: 195 });
-      } else {
-        setRadii({ x: 450, y: 205 });
-      }
-    };
-
-    updateRadii();
-    window.addEventListener('resize', updateRadii);
-    return () => window.removeEventListener('resize', updateRadii);
-  }, []);
-
-  // Fire the expansion animation when the user scrolls down to this section
-  useEffect(() => {
-    if (isInView) {
-      const timer = setTimeout(() => setIsExpanded(true), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView]);
-
-  const resolvedItems = (items && items.length > 0 ? items : defaultYantras).map(resolveItem);
-
+export default function OrbitShowcase() {
   return (
-    <section ref={containerRef} className="relative w-full py-16 sm:py-24 md:py-32 bg-white dark:bg-black transition-colors duration-300 overflow-hidden flex items-center justify-center min-h-[520px] sm:min-h-[580px] md:min-h-[680px]">
+    <div className="relative w-full h-[600px] flex items-center justify-center overflow-hidden bg-white dark:bg-black transition-colors duration-300">
 
-      {/* Ambient center blue glow */}
-      <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-10 dark:opacity-20 z-0">
-        <div className="w-[30rem] h-[30rem] bg-brand-blue rounded-full mix-blend-screen filter blur-[120px]"></div>
+      {/* Center Logo */}
+      <div className="absolute z-20 flex items-center justify-center w-32 h-32 rounded-full bg-white dark:bg-gray-900 shadow-[0_0_40px_rgba(108,180,238,0.3)] border border-black/5 dark:border-white/10">
+        <img src="/logos/ACM.png" alt="ACM Central" className="w-20 h-20 object-contain" />
       </div>
 
-      <div className="relative z-10 flex items-center justify-center w-full max-w-5xl">
+      {/* Orbiting Rings */}
+      <div className="absolute w-[300px] h-[300px] border border-brand-blue/20 rounded-full" />
+      <div className="absolute w-[450px] h-[450px] border border-brand-blue/10 rounded-full" />
+      <div className="absolute w-[600px] h-[600px] border border-brand-blue/5 rounded-full" />
 
-        {/* Subtle Orbital Ellipse Guide */}
-        <div
-          className="absolute pointer-events-none border border-dashed border-brand-blue/20 dark:border-brand-blue/30 rounded-full transition-all duration-700 ease-out"
-          style={{
-            width: radii.x * 2,
-            height: radii.y * 2,
-            opacity: isExpanded ? 0.6 : 0,
-            transform: isExpanded ? 'scale(1)' : 'scale(0.3)'
-          }}
-        />
-
-        {/* Central Core */}
-        <motion.div
-          onClick={() => setIsExpanded(!isExpanded)}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          whileHover={{ scale: 1.05 }}
-          className="absolute z-20 flex flex-col items-center justify-center w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full border border-brand-blue/30 bg-white/40 dark:bg-black/40 backdrop-blur-xl shadow-[0_0_40px_rgba(108,180,238,0.2)] cursor-pointer select-none"
-        >
-          <h3 className="text-[11px] sm:text-xs md:text-sm font-bold tracking-[0.2em] text-brand-blue uppercase text-center leading-relaxed">
-            {title.split(' ').map((word, i) => <React.Fragment key={i}>{word}<br /></React.Fragment>)}
-          </h3>
-        </motion.div>
-
-        {/* Orbiting SIG Images in Circles */}
-        {resolvedItems.map((item, i) => {
-          const angle = (i / resolvedItems.length) * 2 * Math.PI - Math.PI / 2;
-
-          // Target coordinates based on whether the state is expanded or collapsed
-          const targetX = isExpanded ? Math.cos(angle) * radii.x : 0;
-          const targetY = isExpanded ? Math.sin(angle) * radii.y : 0;
-
-          const themeColor = rainbowColors[i % rainbowColors.length];
+      {/* Orbiting Items */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+        className="absolute w-[450px] h-[450px]"
+      >
+        {yantras.map((yantra, i) => {
+          const angle = (i * 360) / yantras.length;
+          // Calculate position on the circle (radius = 225px)
+          const radius = 225;
+          const x = radius * Math.cos((angle * Math.PI) / 180);
+          const y = radius * Math.sin((angle * Math.PI) / 180);
 
           return (
             <motion.div
-              key={item.name || i}
-              animate={{
-                x: targetX,
-                y: targetY,
-                opacity: isExpanded ? 1 : 0,
-                scale: isExpanded ? 1 : 0.2
-              }}
-              whileHover={{
-                scale: 1.15,
-                zIndex: 30,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 60,
-                damping: 12,
-                delay: isExpanded ? i * 0.08 : 0,
-              }}
-              className="group absolute z-10 flex flex-col items-center justify-center cursor-pointer"
+              key={yantra.name}
+              className="absolute top-1/2 left-1/2 flex items-center justify-center w-16 h-16 -ml-8 -mt-8 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-black/5 dark:border-white/10 group cursor-pointer"
+              style={{ x, y }}
+              // Counter-rotate the icons so they stay upright while orbiting
+              animate={{ rotate: -360 }}
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              whileHover={{ scale: 1.2 }}
             >
-              {item.name.toLowerCase().replace(/[^a-z]/g, '') === 'acmw' ? (
-                <a
-                  href="https://acmwnitk.hosting.acm.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative flex items-center justify-center w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 lg:w-24 lg:h-24 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-1.5 sm:p-2 md:p-2.5 overflow-hidden"
-                  style={{
-                    borderColor: `${themeColor}aa`,
-                    '--glow-color': themeColor,
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/logos/ACM.png";
-                    }}
-                  />
-                </a>
-              ) : (
-                <Link
-                  to={`/sigs/${item.name.toLowerCase()}`}
-                  className="relative flex items-center justify-center w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 lg:w-24 lg:h-24 rounded-full border-2 bg-white dark:bg-black/90 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:shadow-[0_0_25px_var(--glow-color)] p-1.5 sm:p-2 md:p-2.5 overflow-hidden"
-                  style={{
-                    borderColor: `${themeColor}aa`,
-                    '--glow-color': themeColor,
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-110"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/logos/ACM.png";
-                    }}
-                  />
-                </Link>
-              )}
+              <img src={yantra.logo} alt={yantra.name} className="w-10 h-10 object-contain rounded-full" />
 
-              {/* Tooltip popping up on hover */}
-              <span
-                style={{ color: themeColor }}
-                className="absolute -bottom-9 sm:-bottom-10 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase whitespace-nowrap bg-white/95 dark:bg-black/90 border border-black/10 dark:border-white/10 shadow-lg transform translate-y-1 group-hover:translate-y-0"
-              >
-                {item.name}
-              </span>
+              {/* Tooltip on hover */}
+              <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-brand-navy dark:text-white bg-white/90 dark:bg-black/90 px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
+                {yantra.name}
+              </div>
             </motion.div>
           );
         })}
-      </div>
-    </section>
+      </motion.div>
+    </div>
   );
 }
