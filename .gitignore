@@ -87,6 +87,9 @@ tmp/*
 # Active Storage & Uploaded Files
 storage/*
 !storage/.keep
+dpimg/
+ACMfrontend/dpimg
+ACMfrontend/public/dpimg/
 
 # SQLite Databases (if used for testing/local dev)
 *.sqlite3

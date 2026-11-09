@@ -5,7 +5,7 @@ import Hero from '../ui/Hero';
 import { api } from '../../services/api';
 import { handleImageError } from '../../lib/utils';
 
-// Core 4 SIG projects: Sanganitra, Yantrika, Vidyuth, Kaaryavarta
+// Core 4 SIG projects: Sanganitra, Yantrika, Vidyut, Kaaryavarta
 const expoProjects = [
     {
         id: "mock-1",
@@ -26,7 +26,7 @@ const expoProjects = [
     {
         id: "mock-3",
         title: "Smart Grid Energy Monitor",
-        sig: "Vidyuth",
+        sig: "Vidyut",
         description: "IoT embedded sensor array mapping real-time campus power consumption and surge telemetry.",
         image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
         techStack: ["ESP32", "MQTT", "Embedded C", "InfluxDB"]
@@ -41,7 +41,7 @@ const expoProjects = [
     }
 ];
 
-const filterOptions = ["All", "Sanganitra", "Yantrika", "Vidyuth", "Kaaryavarta"];
+const filterOptions = ["All", "Sanganitra", "Yantrika", "Vidyut", "Kaaryavarta"];
 
 export default function ProjectExpoPage() {
     const [projects, setProjects] = useState(expoProjects);
@@ -51,7 +51,7 @@ export default function ProjectExpoPage() {
         const loadLiveProjects = async () => {
             const data = await api.getProjects();
             if (data && data.length > 0) {
-                // Strictly filter to the 4 technical & management SIGs: Sanganitra, Yantrika, Vidyuth, Kaaryavarta
+                // Strictly filter to the 4 technical & management SIGs: Sanganitra, Yantrika, Vidyut, Kaaryavarta
                 const allowedData = data.filter(p => {
                     const s = (p.sig?.name || '').toLowerCase();
                     return s.includes('sanga') || s.includes('yantrika') || s.includes('vidyut') || s.includes('karyavarta') || s.includes('kaaryavarta');
@@ -78,7 +78,7 @@ export default function ProjectExpoPage() {
         : projects.filter(p => {
             const sigLower = (p.sig || '').toLowerCase();
             const filterLower = selectedSig.toLowerCase();
-            return sigLower.includes(filterLower) || (filterLower === 'vidyuth' && sigLower.includes('vidyut')) || (filterLower === 'kaaryavarta' && sigLower.includes('karyavarta'));
+            return sigLower.includes(filterLower) || ((filterLower === 'vidyut' || filterLower === 'vidyuth') && sigLower.includes('vidyut')) || (filterLower === 'kaaryavarta' && sigLower.includes('karyavarta'));
         });
 
     return (

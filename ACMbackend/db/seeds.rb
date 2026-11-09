@@ -22,10 +22,9 @@ puts "🌱 Seeding Database..."
 # 1. SIGs (Special Interest Groups)
 sanganitra = Sig.create!(name: "Sanganitra", title: "Computer Science SIG", description: "Exploring software and algorithms.")
 yantrika = Sig.create!(name: "Yantrika", title: "Mechanical SIG", description: "Building the physical future.")
-vidyuth = Sig.create!(name: "Vidyuth", title: "Electrical SIG", description: "Powering innovations.")
+vidyut = Sig.create!(name: "Vidyut", title: "Electrical SIG", description: "Powering innovations.")
 kaaryavarta = Sig.create!(name: "Kaaryavarta", title: "Management SIG", description: "Leading and organizing.")
 saahitya = Sig.create!(name: "Saahitya", title: "Literary & Research SIG", description: "Technical publications, newsletters and research writing.")
-abhivyakta = Sig.create!(name: "Abhivyakta", title: "Media & Design SIG", description: "Digital art, branding and front-end aesthetics.")
 krutagnata = Sig.create!(name: "Krutagnata", title: "Social Initiative SIG", description: "Tech-driven community outreach and impact.")
 acmw = Sig.create!(name: "ACMW", title: "Women in Technology", description: "Supporting and empowering women in computing and technology.")
 
@@ -101,7 +100,7 @@ Project.create!(
 # 6. Project Proposals (Ongoing Pitches)
 proposal = ProjectProposal.create!(
   title: "Smart Campus Energy Monitor",
-  sig: vidyuth,
+  sig: vidyut,
   year: current_academic_year, # Direct INT column in project_proposals table
   duration: "4 Months",
   introduction: "Monitoring power usage across campus.",
@@ -136,4 +135,7 @@ blog1 = Blog.create!(
 )
 blog1.categories << tech_cat
 
-puts "✅ Seeding Complete! You now have test data for SIGs, Users, Core Positions, Projects, Events, and Blogs."
+# 9. Official Core Team Roster
+load Rails.root.join('db', 'update_core_members.rb')
+
+puts "✅ Seeding Complete! You now have test data for SIGs, Users, Core Positions, Projects, Events, Blogs, and official Core Team."

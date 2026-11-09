@@ -23,7 +23,6 @@ const SIG_IMAGES = {
   yantrika: "/logos/yantrika.png",
   sahiitya: "/logos/Saahitya.jpg",
   saahitya: "/logos/Saahitya.jpg",
-  abhivyakta: "/logos/Abhivyakta.jpeg",
   krutagnata: "/logos/ACM.png",
   acmw: "/logos/acmw.png",
 };
@@ -33,8 +32,7 @@ const defaultYantras = [
   { name: "Karyavarta", image: "/logos/karyavarta.png" },
   { name: "Vidyut", image: "/logos/vidyuth.png" },
   { name: "Yantrika", image: "/logos/yantrika.png" },
-  { name: "Sahiitya", image: "/logos/Saahitya.jpg" },
-  { name: "Abhivyakta", image: "/logos/Abhivyakta.jpeg" },
+  { name: "Saahitya", image: "/logos/Saahitya.jpg" },
   { name: "Krutagnata", image: "/logos/ACM.png" },
   { name: "ACMW", image: "/logos/acmw.png" }
 ];

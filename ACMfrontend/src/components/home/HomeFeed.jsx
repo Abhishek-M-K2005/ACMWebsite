@@ -72,8 +72,8 @@ const fallbackBlogs = [
 ];
 
 export default function HomeFeed() {
-  const [events, setEvents] = useState([]);
-  const [blogs, setBlogs] = useState([]);
+  const [events, setEvents] = useState(fallbackOpenEvents);
+  const [blogs, setBlogs] = useState(fallbackBlogs);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -128,19 +128,12 @@ export default function HomeFeed() {
               </h2>
             </div>
 
-            {/* Auth Badge status for events */}
+            {/* Badge status for events */}
             <div className="flex flex-wrap items-center gap-3">
-              {isLoggedIn ? (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-xs font-bold text-brand-blue">
-                  <ShieldCheck className="w-4 h-4 text-brand-blue" />
-                  <span>Member Access: Open + Intra-Club Events</span>
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-medium text-gray-500 dark:text-gray-400">
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Public Open Events (Login for Intra-Club)</span>
-                </div>
-              )}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-medium text-gray-500 dark:text-gray-400">
+                <Calendar className="w-3.5 h-3.5 text-brand-blue" />
+                <span>Chapter Events</span>
+              </div>
 
               <Link
                 to="/events"

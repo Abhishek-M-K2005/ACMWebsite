@@ -313,7 +313,7 @@ The former [ACM NITK website](https://nitk.acm.org/#/) presented chapter-specifi
 
 ## 22. Restore useful Yantra/SIG subject descriptions
 
-- [x] Compare current Yantra/SIG spellings with backend seed records; use `Sanganitra`, `Yantrika`, `Vidyuth`, `Kaaryavarta`, `Saahitya`, `Abhivyakta`, and `Krutagnata` consistently in the homepage orbit and offline navigation fallback. This matches project records, but is not independent confirmation of the official roster.
+- [x] Compare current Yantra/SIG spellings with backend seed records; use `Sanganitra`, `Yantrika`, `Vidyut`, `Kaaryavarta`, `Saahitya`, and `Krutagnata` consistently in the homepage orbit and offline navigation fallback. This matches project records, but is not independent confirmation of the official roster.
 - [ ] Confirm the active Yantra/SIG roster and official spellings with current chapter leadership; the old indexed site listed six groups while this project's seed data lists seven Yantras plus a separate ACM-W record.
 - [ ] Preserve the breadth the old site communicated. Its indexed content described groups in computing/software/data, electronics and signal-related areas, core engineering/robotics, business/finance/management, literature, and media/creative work. Confirm the present scope of each group with its leads.
 - [ ] Add a detailed page for every active Yantra/SIG with its subject areas, typical activities, projects, KEPs, and participation path (see the profile checklist above).

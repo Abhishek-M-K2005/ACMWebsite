@@ -58,11 +58,56 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="font-bold text-xl tracking-wide">CONNECT</h3>
             <div className="flex gap-4">
-              <a href="#" aria-label="Facebook" className="hover:text-brand-blue transition-colors"><Globe className="w-6 h-6" /></a>
-              <a href="#" aria-label="GitHub" className="hover:text-brand-blue transition-colors"><Code2 className="w-6 h-6" /></a>
-              <a href="#" aria-label="Instagram" className="hover:text-brand-blue transition-colors"><Camera className="w-6 h-6" /></a>
-              <a href="#" aria-label="LinkedIn" className="hover:text-brand-blue transition-colors"><BriefcaseBusiness className="w-6 h-6" /></a>
-              <a href="#" aria-label="Twitter" className="hover:text-brand-blue transition-colors"><MessageCircle className="w-6 h-6" /></a>
+              <a 
+                href="https://acm.nitk.ac.in/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Official Website" 
+                title="ACM NITK Official Website" 
+                className="hover:text-brand-blue transition-colors"
+              >
+                <Globe className="w-6 h-6" />
+              </a>
+              <a 
+                href="https://github.com/ACM-NITK" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="GitHub" 
+                title="ACM NITK GitHub" 
+                className="hover:text-brand-blue transition-colors"
+              >
+                <Code2 className="w-6 h-6" />
+              </a>
+              <a 
+                href="https://www.instagram.com/acmnitk/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Instagram" 
+                title="ACM NITK Instagram" 
+                className="hover:text-brand-blue transition-colors"
+              >
+                <Camera className="w-6 h-6" />
+              </a>
+              <a 
+                href="https://www.linkedin.com/company/acm-nitk" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="LinkedIn" 
+                title="ACM NITK LinkedIn" 
+                className="hover:text-brand-blue transition-colors"
+              >
+                <BriefcaseBusiness className="w-6 h-6" />
+              </a>
+              <a 
+                href="https://x.com/AcmNitk" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="X (formerly Twitter)" 
+                title="ACM NITK on X" 
+                className="hover:text-brand-blue transition-colors"
+              >
+                <MessageCircle className="w-6 h-6" />
+              </a>
             </div>
           </div>
         </div>

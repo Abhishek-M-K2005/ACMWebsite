@@ -1,7 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) || 'http://localhost:3000';
 
 export async function fetchWithTimeout(resource, options = {}) {
-  const { timeout = 15000, ...fetchOptions } = options;
+  const { timeout = 2500, ...fetchOptions } = options;
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   try {
@@ -50,6 +50,18 @@ export const api = {
   async getProjects() {
     try {
       const res = await fetchWithTimeout(`${API_BASE_URL}/projects`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return Array.isArray(data) && data.length > 0 ? data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async getMembers(core = true) {
+    try {
+      const url = core ? `${API_BASE_URL}/members?core=true` : `${API_BASE_URL}/members`;
+      const res = await fetchWithTimeout(url);
       if (!res.ok) return null;
       const data = await res.json();
       return Array.isArray(data) && data.length > 0 ? data : null;

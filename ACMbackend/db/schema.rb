@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_145704) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_101800) do
   create_table "blog_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blog_id", null: false
     t.bigint "category_id", null: false
@@ -54,8 +54,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_145704) do
   create_table "core_positions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP(6)" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP(6)" }, null: false
   end
 
   create_table "event_registrations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -106,6 +106,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_145704) do
     t.bigint "sig_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "sub_sig"
     t.index ["core_position_id"], name: "index_members_on_core_position_id"
     t.index ["sig_id"], name: "index_members_on_sig_id"
   end
@@ -236,6 +237,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_145704) do
     t.string "reset_password_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "sub_sig"
     t.index ["core_position_id"], name: "index_users_on_core_position_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

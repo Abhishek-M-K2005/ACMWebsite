@@ -3,11 +3,13 @@ node_modules/
 .pnp
 .pnp.js
 
-# Production / Build
+# Build and Output
 dist/
 dist-ssr/
 build/
 *.tsbuildinfo
+dpimg/
+public/dpimg/
 
 # Environment variables
 .env

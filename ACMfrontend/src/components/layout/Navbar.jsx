@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, Moon, Sun, CircleUserRound, LogOut } from 'lucide-react';
-import FloatingLogin from './FloatingLogin';
+import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-react';
 import { api } from '../../services/api';
 
 const DEFAULT_YANTRAS = [
@@ -9,10 +8,9 @@ const DEFAULT_YANTRAS = [
   { id: 2, name: "Karyavarta" },
   { id: 3, name: "Vidyut" },
   { id: 4, name: "Yantrika" },
-  { id: 5, name: "Sahiitya" },
-  { id: 6, name: "Abhivyakta" },
-  { id: 7, name: "Krutagnata" },
-  { id: 8, name: "ACMW" }
+  { id: 5, name: "Saahitya" },
+  { id: 6, name: "Krutagnata" },
+  { id: 7, name: "ACMW" }
 ];
 
 const navLinks = [
@@ -27,7 +25,6 @@ const navLinks = [
 export default function Navbar({ darkMode, setDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [sigs, setSigs] = useState(DEFAULT_YANTRAS);
   const dropdownRef = useRef(null);
 
@@ -54,9 +51,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  // Check if the user is authenticated via local storage
-  const currentUser = JSON.parse(localStorage.getItem('acm_user'));
 
   // Track the current route to highlight the active tab
   const location = useLocation();
@@ -158,42 +152,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
                 </Link>
               </li>
             ))}
-
-            {/* Auth Integration for Desktop */}
-            <li className="flex items-center ml-1 sm:ml-1.5">
-              {currentUser ? (
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => setIsLoginOpen(true)}
-                    className="flex items-center gap-1.5 text-brand-blue hover:opacity-80 transition-opacity"
-                    title={`Logged in as ${currentUser.name}. Click to view profile / logout.`}
-                  >
-                    <div className="w-6.5 h-6.5 rounded-full bg-brand-blue/20 border border-brand-blue/50 flex items-center justify-center overflow-hidden text-[11px] uppercase font-bold">
-                      {currentUser.avatar_url ? (
-                        <img src={currentUser.avatar_url} alt={currentUser.name} className="w-full h-full object-cover" />
-                      ) : (
-                        currentUser.name.charAt(0)
-                      )}
-                    </div>
-                    <span className="text-xs font-semibold max-w-[95px] truncate">{currentUser.name.split(' ')[0]}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      api.logout();
-                      window.location.reload();
-                    }}
-                    title="Sign Out"
-                    className="text-gray-400 hover:text-red-500 transition-colors p-0.5"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ) : (
-                <button onClick={() => setIsLoginOpen(true)} className="flex items-center gap-1.5 hover:text-brand-blue transition-colors text-xs sm:text-[13px] font-semibold">
-                  <CircleUserRound className="w-4 h-4" /> Login
-                </button>
-              )}
-            </li>
 
             <li className="ml-1 sm:ml-1.5 border-l border-brand-navy/20 dark:border-white/40 pl-2.5 shrink-0">
               <button 
@@ -297,47 +255,9 @@ export default function Navbar({ darkMode, setDarkMode }) {
               ))}
             </div>
 
-            {/* Auth Integration for Mobile */}
-            <div className="font-bold mb-2 border-b border-brand-navy/10 dark:border-white/20 pb-2 mt-2">Account</div>
-            <div className="pl-2">
-              {currentUser ? (
-                <div className="flex items-center justify-between pr-2">
-                  <button
-                    onClick={() => { setIsOpen(false); setIsLoginOpen(true); }}
-                    className="flex items-center gap-3 text-sm font-medium text-brand-blue"
-                  >
-                    <div className="w-7 h-7 rounded-full bg-brand-blue/20 flex items-center justify-center overflow-hidden text-xs uppercase font-bold">
-                      {currentUser.avatar_url ? <img src={currentUser.avatar_url} alt="" className="w-full h-full object-cover" /> : currentUser.name.charAt(0)}
-                    </div>
-                    <span>{currentUser.name}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      api.logout();
-                      setIsOpen(false);
-                      window.location.reload();
-                    }}
-                    className="flex items-center gap-1.5 text-xs text-red-500 font-semibold px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
-                  >
-                    <LogOut className="w-3.5 h-3.5" /> Sign Out
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => { setIsOpen(false); setIsLoginOpen(true); }}
-                  className="flex items-center gap-2 text-sm font-medium hover:text-brand-blue transition-colors"
-                >
-                  <CircleUserRound className="w-4 h-4" /> Member Login
-                </button>
-              )}
-            </div>
-
           </div>
         )}
       </div>
-
-      {/* Keep the modal isolated from the sticky nav structure */}
-      <FloatingLogin isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
 }

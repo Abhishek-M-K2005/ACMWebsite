@@ -33,4 +33,9 @@ class SigsControllerTest < ActionDispatch::IntegrationTest
     get sig_url(id: "nonexistent-sig-name")
     assert_response :not_found
   end
+
+  test "should confirm abhivyakta is absent from sigs" do
+    get sig_url(id: "abhivyakta")
+    assert_response :not_found
+  end
 end

@@ -25,8 +25,8 @@ const sigs = [
         icon: Wrench
     },
     {
-        id: "vidyuth",
-        name: "Vidyuth",
+        id: "vidyut",
+        name: "Vidyut",
         focus: "Electronics & IoT",
         description: "Review proposals focused on embedded systems, IoT infrastructure, and hardware-software interfacing.",
         image: "/logos/vidyuth.png",

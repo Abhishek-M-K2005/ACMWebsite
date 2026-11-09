@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show]
   resources :project_proposals, only: [:index, :show]
   resources :sigs, only: [:index, :show]
+  resources :members, only: [:index, :show]
 
   get 'auth/me', to: 'users#me'
   patch 'auth/change_password', to: 'users#change_password'
