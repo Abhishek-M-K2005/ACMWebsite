@@ -77,18 +77,34 @@ vendor/bundle/
 # Rails Logs & Temp Files
 log/*
 tmp/*
+**/log/*
+**/tmp/*
 !log/.keep
 !tmp/.keep
+!**/log/.keep
+!**/tmp/.keep
 !tmp/pids/
 !tmp/pids/.keep
+!**/tmp/pids/
+!**/tmp/pids/.keep
 !tmp/storage/
 !tmp/storage/.keep
+!**/tmp/storage/
+!**/tmp/storage/.keep
 
 # Active Storage & Uploaded Files
 storage/*
 !storage/.keep
+**/storage/*
+!**/storage/.keep
+**/public/uploads/*
+!**/public/uploads/.keep
+dpimg
 dpimg/
+**/dpimg
+**/dpimg/**
 ACMfrontend/dpimg
+ACMfrontend/public/dpimg
 ACMfrontend/public/dpimg/
 
 # SQLite Databases (if used for testing/local dev)

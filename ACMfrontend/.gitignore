@@ -8,7 +8,10 @@ dist/
 dist-ssr/
 build/
 *.tsbuildinfo
+# Uploaded images & symlinks
+dpimg
 dpimg/
+public/dpimg
 public/dpimg/
 
 # Environment variables
